@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "950644538788",
+    "project_id": "truthsoko",
+    "storage_bucket": "truthsoko.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950644538788:android:545ffdc83d357798729531",
+        "android_client_info": {
+          "package_name": "com.example.truthsoko"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "950644538788-mgvo8cdlp7m8q1usqk3f4ft8kb6glcug.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.truthsoko",
+            "certificate_hash": "26143003ab060de4a9e4f9bac2765115b98a04d2"
+          }
+        },
+        {
+          "client_id": "950644538788-3hcdfcbl9crv3s4e4n6lmk3krb7m75hl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvSBxEGOkVGhhVvd-KC-bizRknzgRNfmI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "950644538788-3hcdfcbl9crv3s4e4n6lmk3krb7m75hl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
