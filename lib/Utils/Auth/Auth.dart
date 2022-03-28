@@ -1,7 +1,5 @@
 // ignore_for_file: constant_identifier_names
-
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -66,7 +64,7 @@ class UserRepository with ChangeNotifier {
       await _auth.signInWithCredential(credential);
       return true;
     } catch (e) {
-      print(e);
+      print(e.toString());
       _status = Status.Unauthenticated;
       notifyListeners();
       return false;

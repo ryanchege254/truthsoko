@@ -23,8 +23,8 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController? _email;
-  TextEditingController? _password;
+  final TextEditingController? _email = TextEditingController();
+  final TextEditingController? _password = TextEditingController();
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -118,11 +118,10 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       onTap: () async {
-        if (!await context
+        await context
             .read<UserRepository>()
-            .signIn(_email!.text, _password!.text)) {
-          print("Login");
-        }
+            .signIn(_email!.text.trim(), _password!.text);
+        print("Login");
       },
     );
   }
@@ -281,6 +280,7 @@ class _LoginPageState extends State<LoginPage> {
                                 .isValid
                                 .isValidEmail(value);*/
                           },
+                          matchPassword: false,
                         ),
                         const SizedBox(
                           height: 10.0,
@@ -301,13 +301,14 @@ class _LoginPageState extends State<LoginPage> {
                                         ? Icons.visibility
                                         : Icons.visibility_off,
                                 onChanged: (String) {},
+                                matchPassword: false,
                               ),
                             ]),
                         const SizedBox(height: 20),
                         _submitButton(),
                         GestureDetector(
                           child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
                             alignment: Alignment.centerRight,
                             child: const Text('Forgot Password ?',
                                 style: TextStyle(
@@ -321,15 +322,16 @@ class _LoginPageState extends State<LoginPage> {
                           },
                         ),
                         _divider(),
-
+                        SizedBox(height: height * .055),
                         SignInButton(
                           Buttons.Google,
+                          padding: const EdgeInsets.all(15),
                           text: "Sign In with Google",
                           onPressed: () async {
                             await context
                                 .read<UserRepository>()
-                                .signInWithGoogle();
-                            print("Logged in");
+                                .signInWithGoogle()
+                                .then((value) => print("Logged in"));
                           },
                         ),
                         SizedBox(height: height * .055),

@@ -7,6 +7,8 @@ import 'package:truthsoko/src/Widget/textfield_widget.dart';
 import 'package:truthsoko/Pages/loginPage.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../src/models/textview_model.dart';
+
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key, this.title}) : super(key: key);
 
@@ -20,7 +22,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController? _username;
   TextEditingController? _email;
   TextEditingController? _passwordController;
-  TextEditingController? _confirmPassword;
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -164,57 +166,68 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget _emailPasswordWidget() {
-    String? _password;
+    late bool revealPassword;
+
     return Column(
       children: <Widget>[
         TextFieldWidget(
-            controller: _username,
-            hintText: "Username",
-            prefixIconData: Icons.person,
-            suffixIconData: null,
-            obscureText: false,
-            onChanged: (value) {}),
+          controller: _username,
+          hintText: "Username",
+          prefixIconData: Icons.person,
+          suffixIconData: null,
+          obscureText: false,
+          onChanged: (value) {},
+          matchPassword: false,
+        ),
         const SizedBox(
           height: 10.0,
         ),
         TextFieldWidget(
-            controller: _email,
-            hintText: "Email",
-            prefixIconData: Icons.email,
-            suffixIconData: null,
-            obscureText: false,
-            onChanged: (value) {}),
+          controller: _email,
+          hintText: "Email",
+          prefixIconData: Icons.email,
+          suffixIconData: null,
+          obscureText: false,
+          onChanged: (value) {},
+          matchPassword: false,
+        ),
         const SizedBox(
           height: 10.0,
         ),
         TextFieldWidget(
-            controller: _passwordController,
-            hintText: "Password",
-            prefixIconData: Icons.lock_outline,
-            suffixIconData: null,
-            obscureText: false,
-            onChanged: (value) {
-              value = _password!;
-            }),
+          controller: _passwordController,
+          hintText: "Password",
+          prefixIconData: Icons.lock_outline,
+          suffixIconData: context.read<TextviewModel>().isVisible
+              ? Icons.visibility
+              : Icons.visibility_off,
+          obscureText: true,
+          onChanged: (value) {},
+          matchPassword: false,
+        ),
         const SizedBox(
           height: 10.0,
         ),
         TextFieldWidget(
-            controller: _confirmPassword,
-            hintText: "Confirm Password",
-            prefixIconData: Icons.lock_outline_sharp,
-            suffixIconData: null,
-            obscureText: false,
-            onChanged: (value) {
-              if (value != _password) {
+          controller: _passwordController,
+          hintText: "Confirm Password",
+          prefixIconData: Icons.lock_outline_sharp,
+          suffixIconData: context.read<TextviewModel>().isVisible
+              ? Icons.visibility
+              : Icons.visibility_off,
+          obscureText: true,
+          onChanged: (value) {
+            /* if (value != _password) {
                 // ignore: avoid_print
                 print("matching");
                 const SnackBar(
                   content: Text("Passwords do not match, Try again"),
                   duration: Duration(seconds: 2),
                 );
-              }
-            })
+              }*/
+          },
+          matchPassword: true,
+        )
       ],
     );
   }
@@ -238,38 +251,42 @@ class _SignUpPageState extends State<SignUpPage> {
               right: -MediaQuery.of(context).size.width * .4,
               child: const BezierContainer(),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    SizedBox(height: height * .2),
-                    _title(),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    _emailPasswordWidget(),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    _submitButton(),
-                    SizedBox(height: height * .14),
-                    SignInButton(
-                      Buttons.Google,
-                      text: "Sign up with Google",
-                      onPressed: () async {
-                        await context.read<UserRepository>().signInWithGoogle();
-                        print("Logged in");
-                      },
-                    ),
-                    SizedBox(height: height * .14),
-                    _loginAccountLabel(),
-                  ],
+            Builder(builder: (context) {
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(height: height * .2),
+                      _title(),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      _emailPasswordWidget(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      _submitButton(),
+                      SizedBox(height: height * .14),
+                      SignInButton(
+                        Buttons.Google,
+                        text: "Sign up with Google",
+                        onPressed: () async {
+                          await context
+                              .read<UserRepository>()
+                              .signInWithGoogle();
+                          print("Logged in");
+                        },
+                      ),
+                      SizedBox(height: height * .14),
+                      _loginAccountLabel(),
+                    ],
+                  ),
                 ),
-              ),
-            ),
+              );
+            }),
             Positioned(top: 40, left: 0, child: _backButton()),
           ],
         ),

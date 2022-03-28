@@ -10,6 +10,7 @@ class TextFieldWidget extends StatelessWidget {
   final bool obscureText;
   final Function(String)? onChanged;
   final TextEditingController? controller;
+  final bool matchPassword;
 
   // ignore: use_key_in_widget_constructors
   const TextFieldWidget(
@@ -18,7 +19,8 @@ class TextFieldWidget extends StatelessWidget {
       required this.suffixIconData,
       required this.obscureText,
       required this.onChanged,
-      required this.controller});
+      required this.controller,
+      required this.matchPassword});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +28,7 @@ class TextFieldWidget extends StatelessWidget {
 
     return ChangeNotifierProvider(
         create: (context) => TextviewModel(),
-        child: TextField(
+        child: TextFormField(
           controller: controller,
           onChanged: onChanged,
           obscureText: obscureText,
@@ -55,7 +57,7 @@ class TextFieldWidget extends StatelessWidget {
             ),
             suffixIcon: GestureDetector(
               onTap: () {
-                // model.isVisible = !model.isVisible;
+                 //.isVisible = !model.isVisible;
                 context.read<TextviewModel>().isVisible =
                     !context.read<TextviewModel>().isVisible;
               },
@@ -66,6 +68,17 @@ class TextFieldWidget extends StatelessWidget {
               ),
             ),
           ),
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'Empty';
+            }
+            if (matchPassword == true) {
+              if (value == controller!.text) {
+                return "Passwords do not match";
+              }
+            }
+            return null;
+          },
         ));
   }
 }
