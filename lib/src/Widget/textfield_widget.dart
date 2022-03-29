@@ -57,7 +57,7 @@ class TextFieldWidget extends StatelessWidget {
             ),
             suffixIcon: GestureDetector(
               onTap: () {
-                 //.isVisible = !model.isVisible;
+                //.isVisible = !model.isVisible;
                 context.read<TextviewModel>().isVisible =
                     !context.read<TextviewModel>().isVisible;
               },
