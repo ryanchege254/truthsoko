@@ -110,7 +110,6 @@ class ForgotPassword extends State<Forgot> {
                                 .isValid
                                 .isValidEmail(value);*/
                           },
-                          matchPassword: false,
                         ),
                         const SizedBox(
                           height: 10.0,

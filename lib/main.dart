@@ -47,6 +47,7 @@ class App extends StatelessWidget {
             case Status.Uninitialized:
               return const WelcomePage();
             case Status.Unauthenticated:
+              return const WelcomePage();
             case Status.Authenticating:
               return const LoginPage();
             case Status.Authenticated:

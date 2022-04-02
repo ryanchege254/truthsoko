@@ -280,7 +280,6 @@ class _LoginPageState extends State<LoginPage> {
                                 .isValid
                                 .isValidEmail(value);*/
                           },
-                          matchPassword: false,
                         ),
                         const SizedBox(
                           height: 10.0,
@@ -301,7 +300,6 @@ class _LoginPageState extends State<LoginPage> {
                                         ? Icons.visibility
                                         : Icons.visibility_off,
                                 onChanged: (String) {},
-                                matchPassword: false,
                               ),
                             ]),
                         const SizedBox(height: 20),
@@ -325,13 +323,18 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(height: height * .055),
                         SignInButton(
                           Buttons.Google,
-                          padding: const EdgeInsets.all(15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          elevation: 10,
+                          padding: const EdgeInsets.only(
+                              left: 40, right: 40, top: 5, bottom: 5),
                           text: "Sign In with Google",
                           onPressed: () async {
-                            await context
-                                .read<UserRepository>()
-                                .signInWithGoogle()
-                                .then((value) => print("Logged in"));
+                            final provider = Provider.of<UserRepository>(
+                                context,
+                                listen: false);
+                            await provider.signInWithGoogle();
                           },
                         ),
                         SizedBox(height: height * .055),

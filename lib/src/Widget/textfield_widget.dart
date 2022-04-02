@@ -10,7 +10,6 @@ class TextFieldWidget extends StatelessWidget {
   final bool obscureText;
   final Function(String)? onChanged;
   final TextEditingController? controller;
-  final bool matchPassword;
 
   // ignore: use_key_in_widget_constructors
   const TextFieldWidget(
@@ -19,8 +18,7 @@ class TextFieldWidget extends StatelessWidget {
       required this.suffixIconData,
       required this.obscureText,
       required this.onChanged,
-      required this.controller,
-      required this.matchPassword});
+      required this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -70,13 +68,9 @@ class TextFieldWidget extends StatelessWidget {
           ),
           validator: (value) {
             if (value!.isEmpty) {
-              return 'Empty';
+              return "Required";
             }
-            if (matchPassword == true) {
-              if (value == controller!.text) {
-                return "Passwords do not match";
-              }
-            }
+
             return null;
           },
         ));

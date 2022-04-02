@@ -169,72 +169,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  /*Widget _emailPasswordWidget() {
-    late bool revealPassword;
-
-    return Column(
-      children: <Widget>[
-        TextFieldWidget(
-          controller: _username,
-          hintText: "Username",
-          prefixIconData: Icons.person,
-          suffixIconData: null,
-          obscureText: false,
-          onChanged: (value) {},
-          matchPassword: false,
-        ),
-        const SizedBox(
-          height: 10.0,
-        ),
-        TextFieldWidget(
-          controller: _email,
-          hintText: "Email",
-          prefixIconData: Icons.email,
-          suffixIconData: null,
-          obscureText: false,
-          onChanged: (value) {},
-          matchPassword: false,
-        ),
-        const SizedBox(
-          height: 10.0,
-        ),
-        TextFieldWidget(
-          controller: _passwordController,
-          hintText: "Password",
-          prefixIconData: Icons.lock_outline,
-          suffixIconData: context.read<TextviewModel>().isVisible
-              ? Icons.visibility
-              : Icons.visibility_off,
-          obscureText: true,
-          onChanged: (value) {},
-          matchPassword: false,
-        ),
-        const SizedBox(
-          height: 10.0,
-        ),
-        TextFieldWidget(
-          controller: _passwordController,
-          hintText: "Confirm Password",
-          prefixIconData: Icons.lock_outline_sharp,
-          suffixIconData: context.read<TextviewModel>().isVisible
-              ? Icons.visibility
-              : Icons.visibility_off,
-          obscureText: true,
-          onChanged: (value) {
-            /* if (value != _password) {
-                // ignore: avoid_print
-                print("matching");
-                const SnackBar(
-                  content: Text("Passwords do not match, Try again"),
-                  duration: Duration(seconds: 2),
-                );
-              }*/
-          },
-          matchPassword: true,
-        )
-      ],
-    );
-  }*/
+  late bool revealPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -283,25 +218,12 @@ class _SignUpPageState extends State<SignUpPage> {
                             return Column(
                               children: <Widget>[
                                 TextFieldWidget(
-                                  controller: _username,
-                                  hintText: "Username",
-                                  prefixIconData: Icons.person,
-                                  suffixIconData: null,
-                                  obscureText: false,
-                                  onChanged: (value) {},
-                                  matchPassword: false,
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
-                                ),
-                                TextFieldWidget(
                                   controller: _email,
                                   hintText: "Email",
                                   prefixIconData: Icons.email,
                                   suffixIconData: null,
                                   obscureText: false,
                                   onChanged: (value) {},
-                                  matchPassword: false,
                                 ),
                                 const SizedBox(
                                   height: 10.0,
@@ -315,7 +237,6 @@ class _SignUpPageState extends State<SignUpPage> {
                                       : Icons.visibility_off,
                                   obscureText: model.isVisible,
                                   onChanged: (value) {},
-                                  matchPassword: false,
                                 ),
                                 const SizedBox(
                                   height: 10.0,
@@ -324,22 +245,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                   controller: _confirmpasswordController,
                                   hintText: "Confirm Password",
                                   prefixIconData: Icons.lock_outline_sharp,
-                                  suffixIconData:
-                                      context.read<TextviewModel>().isVisible
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
-                                  obscureText: model.isVisible,
-                                  onChanged: (value) {
-                                    /* if (value != _password) {
-                      // ignore: avoid_print
-                      print("matching");
-                      const SnackBar(
-                        content: Text("Passwords do not match, Try again"),
-                        duration: Duration(seconds: 2),
-                      );
-                    }*/
-                                  },
-                                  matchPassword: true,
+                                  suffixIconData: null,
+                                  obscureText: true,
+                                  onChanged: (value) {},
                                 )
                               ],
                             );
@@ -349,53 +257,74 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                           // _submitButton(context),
                           GestureDetector(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(5)),
-                                  boxShadow: <BoxShadow>[
-                                    BoxShadow(
-                                        color: Colors.grey.shade200,
-                                        offset: const Offset(2, 4),
-                                        blurRadius: 5,
-                                        spreadRadius: 2)
-                                  ],
-                                  gradient: const LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        Color(0xfffbb448),
-                                        Color(0xfff7892b)
-                                      ])),
-                              child: const Text(
-                                'Register Now',
-                                style: TextStyle(
-                                    fontSize: 20, color: Colors.white),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 15),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                    boxShadow: <BoxShadow>[
+                                      BoxShadow(
+                                          color: Colors.grey.shade200,
+                                          offset: const Offset(2, 4),
+                                          blurRadius: 5,
+                                          spreadRadius: 2)
+                                    ],
+                                    gradient: const LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          Color(0xfffbb448),
+                                          Color(0xfff7892b)
+                                        ])),
+                                child: const Text(
+                                  'Register Now',
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.white),
+                                ),
                               ),
-                            ),
-                            onTap: () async {
-                              if (_formKey.currentState!.validate()) {
-                                if (!await user.signIn(_email!.text.trim(),
-                                    _passwordController!.text.trim())) {
+                              onTap: () async {
+                                _formKey.currentState!.validate();
+                                final provider =
+                                    Provider.of<UserRepository>(context);
+                                if (_confirmpasswordController!.text ==
+                                    _passwordController!.text) {
+                                  if (!await provider.signUp(
+                                      _email!.text.trim(),
+                                      _passwordController!.text.trim())) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text("Something Went Wrong")));
+                                  }
+                                } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
+                                          backgroundColor: Colors.red,
                                           content:
-                                              Text("Something Went Wrong")));
+                                              Text("Passwords do not match")));
                                 }
-                              }
-                            },
-                          ),
+                              }),
                           SizedBox(height: height * .14),
                           SignInButton(
                             Buttons.Google,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            elevation: 10,
+                            padding: const EdgeInsets.only(
+                                left: 40, right: 40, top: 5, bottom: 5),
                             text: "Sign up with Google",
                             onPressed: () async {
-                              await user
-                                  .signInWithGoogle()
-                                  .then((value) => print("Logged In"));
+                              final provider = Provider.of<UserRepository>(
+                                  context,
+                                  listen: false);
+                              provider.signInWithGoogle().catchError((e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())));
+                              });
                             },
                           ),
                           SizedBox(height: height * .14),

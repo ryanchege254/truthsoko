@@ -3,6 +3,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:truthsoko/Utils/Auth/Auth.dart';
 
 class HomePage extends StatefulWidget {
   final User? user;
@@ -15,9 +18,28 @@ class HomePage extends StatefulWidget {
 class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text("HomePage"),
+    final provider = Provider.of<UserRepository>(context);
+
+    return Scaffold(
+      body: ChangeNotifierProvider(
+        create: (context) => UserRepository.instance(),
+        child: Builder(builder: (context) {
+          return Center(
+            child: Column(
+              children: [
+                TextButton(
+                    onPressed: () {
+                      provider.signOut();
+                    },
+                    child: const Text("Sign Out")),
+                const SizedBox(
+                  height: 15,
+                ),
+                const Text("Welcome"),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

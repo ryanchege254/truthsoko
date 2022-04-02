@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
@@ -12,6 +13,7 @@ class UserRepository with ChangeNotifier {
   final FirebaseAuth _auth;
   User? _user;
   final GoogleSignIn _googleSignIn;
+  GoogleSignInAccount? _signInAccount;
   Status _status = Status.Uninitialized;
 
   UserRepository.instance()
@@ -25,11 +27,11 @@ class UserRepository with ChangeNotifier {
 
   Future<bool> signIn(String email, String password) async {
     try {
-      _status = Status.Authenticating;
+      _status = Status.Authenticated;
       notifyListeners();
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       return true;
-    } catch (e) {
+    } on PlatformException catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
       return false;
@@ -43,32 +45,27 @@ class UserRepository with ChangeNotifier {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       return true;
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
+      print(e.message);
+      print(e.code);
       _status = Status.Unauthenticated;
       notifyListeners();
       return false;
     }
   }
 
-  Future<bool> signInWithGoogle() async {
-    try {
-      _status = Status.Authenticating;
-      notifyListeners();
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser?.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth!.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await _auth.signInWithCredential(credential);
-      return true;
-    } catch (e) {
-      print(e.toString());
-      _status = Status.Unauthenticated;
-      notifyListeners();
-      return false;
+  Future signInWithGoogle() async {
+    final googleUser = await _googleSignIn.signIn();
+    if (googleUser == null) {
+      _signInAccount = googleUser;
     }
+    final googleAuth = await googleUser!.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+    await FirebaseAuth.instance.signInWithCredential(credential);
+    _status = Status.Authenticated;
+    notifyListeners();
   }
 
   Future signOut() async {
@@ -120,5 +117,29 @@ class UserRepository with ChangeNotifier {
       _status = Status.Authenticated;
     }
     notifyListeners();
+  }
+}
+
+class ScaffoldSnackbar {
+  // ignore: public_member_api_docs
+  ScaffoldSnackbar(this._context);
+
+  /// The scaffold of current context.
+  factory ScaffoldSnackbar.of(BuildContext context) {
+    return ScaffoldSnackbar(context);
+  }
+
+  final BuildContext _context;
+
+  /// Helper method to show a SnackBar.
+  void show(String message) {
+    ScaffoldMessenger.of(_context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
   }
 }
