@@ -11,6 +11,7 @@ enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
 class UserRepository with ChangeNotifier {
   final FirebaseAuth _auth;
+  late String errorMsg;
   User? _user;
   final GoogleSignIn _googleSignIn;
   GoogleSignInAccount? _signInAccount;
@@ -25,29 +26,57 @@ class UserRepository with ChangeNotifier {
   Status get status => _status;
   User? get user => _user;
 
-  Future<bool> signIn(String email, String password) async {
+  Future signIn(BuildContext _context, String email, String password) async {
     try {
-      _status = Status.Authenticated;
-      notifyListeners();
+      _status = Status.Authenticating;
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      return true;
-    } on PlatformException catch (e) {
-      _status = Status.Unauthenticated;
       notifyListeners();
-      return false;
+    } on FirebaseAuthException catch (e) {
+      _status = Status.Unauthenticated;
+      switch (e.code) {
+        case 'wrong-password':
+          errorMsg = 'Incorrect email/password';
+
+          break;
+        case 'user-not-found':
+          errorMsg = 'Incorrect email/password';
+          break;
+        default:
+      }
+      show(_context, e.code);
+
+      notifyListeners();
     }
   }
 
-  Future<bool> signUp(String email, String password) async {
+  Future<bool> signUp(
+      BuildContext _context, String email, String password) async {
     try {
       _status = Status.Authenticating;
       notifyListeners();
-      await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      await _auth
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) async {
+        await user!.sendEmailVerification();
+      });
+
+      if (user!.emailVerified) {
+        return true;
+      }
       return true;
     } on FirebaseAuthException catch (e) {
-      print(e.message);
-      print(e.code);
+      switch (e.code) {
+        case 'wrong-password':
+          errorMsg = 'Incorrect email/password';
+
+          break;
+        case 'user-not-found':
+          errorMsg = 'Incorrect email/password';
+          break;
+        default:
+      }
+      show(_context, e.code);
+
       _status = Status.Unauthenticated;
       notifyListeners();
       return false;
@@ -76,35 +105,41 @@ class UserRepository with ChangeNotifier {
     return Future.delayed(Duration.zero);
   }
 
-  Future<void> verifyEmail(
-      BuildContext context, TextEditingController? _forgotPassword) async {
+  Future resetPassword(BuildContext _context, String _forgotPassword) async {
     showDialog(
-      context: context,
+      context: _context,
       barrierDismissible: false,
       builder: (context) => const Center(
-          child: LoadingIndicator(
-              indicatorType: Indicator.cubeTransition,
-              colors: [Global.orange, Global.green, Global.yellow],
-
-              /// Optional, The color collections
-              strokeWidth: 2,
-
-              /// Optional, The stroke of the line, only applicable to widget which contains line
-              backgroundColor: Colors.black,
-
-              /// Optional, Background of the widget
-              pathBackgroundColor: Colors.black)),
+          child: Padding(
+        padding: EdgeInsets.all(64.0),
+        child: LoadingIndicator(
+          indicatorType: Indicator.ballZigZag,
+          colors: [Global.orange, Global.green, Global.yellow],
+        ),
+      )),
     );
     try {
-      await FirebaseAuth.instance
-          .sendPasswordResetEmail(email: _forgotPassword!.text.trim());
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Password Reset Email Sent")));
-      Navigator.of(context).popUntil((route) => route.isFirst);
+      if (user!.emailVerified) {
+        await FirebaseAuth.instance
+            .sendPasswordResetEmail(email: _forgotPassword);
+        ScaffoldMessenger.of(_context).showSnackBar(const SnackBar(
+          content: Text("Password Reset Email Sent"),
+          backgroundColor: Global.green,
+        ));
+        Navigator.of(_context).popUntil((route) => route.isFirst);
+      } else {
+        ScaffoldMessenger.of(_context).showSnackBar(const SnackBar(
+          content: Text(
+              "Check your email for verification! Ensure your email is verified"),
+          backgroundColor: Colors.redAccent,
+        ));
+      }
+      notifyListeners();
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context)
+      ScaffoldMessenger.of(_context)
           .showSnackBar(SnackBar(content: Text(e.message.toString())));
-      Navigator.of(context).pop();
+      Navigator.of(_context).pop();
+      notifyListeners();
     }
   }
 
@@ -118,25 +153,13 @@ class UserRepository with ChangeNotifier {
     }
     notifyListeners();
   }
-}
 
-class ScaffoldSnackbar {
-  // ignore: public_member_api_docs
-  ScaffoldSnackbar(this._context);
-
-  /// The scaffold of current context.
-  factory ScaffoldSnackbar.of(BuildContext context) {
-    return ScaffoldSnackbar(context);
-  }
-
-  final BuildContext _context;
-
-  /// Helper method to show a SnackBar.
-  void show(String message) {
+  void show(BuildContext _context, String message) {
     ScaffoldMessenger.of(_context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
+          backgroundColor: Colors.redAccent,
           content: Text(message),
           behavior: SnackBarBehavior.floating,
         ),

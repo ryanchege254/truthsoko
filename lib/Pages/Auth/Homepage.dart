@@ -24,20 +24,27 @@ class _HomePage extends State<HomePage> {
       body: ChangeNotifierProvider(
         create: (context) => UserRepository.instance(),
         child: Builder(builder: (context) {
-          return Center(
-            child: Column(
-              children: [
-                TextButton(
-                    onPressed: () {
-                      provider.signOut();
-                    },
-                    child: const Text("Sign Out")),
-                const SizedBox(
-                  height: 15,
+          return Column(
+            children: [
+              Center(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          provider.signOut();
+                        },
+                        child: const Text("Sign Out")),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    const Text("Welcome"),
+                  ],
                 ),
-                const Text("Welcome"),
-              ],
-            ),
+              ),
+            ],
           );
         }),
       ),

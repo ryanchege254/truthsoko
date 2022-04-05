@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:truthsoko/src/Widget/color.dart';
-import 'package:truthsoko/Pages/loginPage.dart';
-import 'package:truthsoko/Pages/signup.dart';
+import 'package:truthsoko/Pages/Auth/loginPage.dart';
+import 'package:truthsoko/Pages/Auth/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:truthsoko/src/Widget/onboarding.dart';
@@ -60,7 +61,6 @@ class _WelcomePageState extends State<WelcomePage> {
           context,
           PageTransition(
             curve: Curves.linear,
-            reverseDuration: const Duration(milliseconds: 900),
             duration: const Duration(milliseconds: 900),
             type: PageTransitionType.fade,
             child: const SignUpPage(),
@@ -186,7 +186,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 const SizedBox(
                   height: 20,
                 ),
-                _label()
+                //_label()
               ],
             ),
           ),

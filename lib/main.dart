@@ -2,8 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:truthsoko/Pages/Homepage.dart';
-import 'package:truthsoko/Pages/loginPage.dart';
+import 'package:truthsoko/Pages/Auth/Homepage.dart';
+import 'package:truthsoko/Pages/Auth/loginPage.dart';
 import 'Pages/welcomePage.dart';
 import 'Utils/Auth/Auth.dart';
 
@@ -39,8 +39,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (BuildContext context) => UserRepository.instance(),
+    return ChangeNotifierProvider.value(
+      value: UserRepository.instance(),
       child: Consumer(
         builder: (context, UserRepository user, _) {
           switch (user.status) {
@@ -49,7 +49,6 @@ class App extends StatelessWidget {
             case Status.Unauthenticated:
               return const WelcomePage();
             case Status.Authenticating:
-              return const LoginPage();
             case Status.Authenticated:
               return HomePage(user: context.watch<UserRepository>().user);
           }
