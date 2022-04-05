@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/Auth/Homepage.dart';
 import 'package:truthsoko/Pages/Auth/loginPage.dart';
+import 'package:truthsoko/Pages/home/home_screen.dart';
 import 'Pages/welcomePage.dart';
 import 'Utils/Auth/Auth.dart';
 
@@ -50,7 +51,7 @@ class App extends StatelessWidget {
               return const WelcomePage();
             case Status.Authenticating:
             case Status.Authenticated:
-              return HomePage(user: context.watch<UserRepository>().user);
+              return HomeScreen();
           }
         },
       ),

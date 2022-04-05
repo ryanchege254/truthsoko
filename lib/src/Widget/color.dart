@@ -9,6 +9,9 @@ class Global {
   static const Color white = Color(0xffffffff);
   static const Color green = Color.fromARGB(255, 54, 157, 33);
   static const List validEmail = ['test@gmail.com'];
-   static const List<Color> _loadingIndicator = const [orange,green,yellow];
-
+  //static const List<Color> _loadingIndicator = const [orange, green, yellow];
+  static const panelTransition = Duration(milliseconds: 500);
+  static const defaultPadding = 20.0;
+  static const cartBarHeight = 100.0;
+  static const headerHeight = 85.0;
 }
