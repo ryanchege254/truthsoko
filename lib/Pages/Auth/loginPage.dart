@@ -124,9 +124,13 @@ class _LoginPageState extends State<LoginPage> {
         ),
         onTap: () async {
           if (_formKey.currentState!.validate()) {
-            await provider
-                .signIn(context, _email!.text.trim(), _password!.text.trim())
-                .then((value) => Navigator.of(context).pop());
+            if (!await provider.signIn(
+                context, _email!.text.trim(), _password!.text.trim())) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Something Went Wrong")));
+            } else {
+              Navigator.of(context).pop();
+            }
 
             /*ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Something Went Wrong")));*/

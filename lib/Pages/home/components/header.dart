@@ -11,7 +11,7 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: Global.headerHeight,
-      color: Colors.white,
+      color: const Color.fromARGB(28, 255, 255, 255),
       padding: const EdgeInsets.all(Global.defaultPadding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -20,11 +20,11 @@ class HomeHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Good Morning!",
+                "Welcome!",
                 style: Theme.of(context).textTheme.caption,
               ),
               Text(
-                "Samir Benabadji",
+                "UserName",
                 style: Theme.of(context)
                     .textTheme
                     .subtitle1!
@@ -32,9 +32,9 @@ class HomeHeader extends StatelessWidget {
               )
             ],
           ),
-          CircleAvatar(
+          const CircleAvatar(
             backgroundColor: Colors.transparent,
-            backgroundImage: AssetImage("assets/images/QuestionMark.jpg"),
+            backgroundImage: const AssetImage("assets/images/QuestionMark.jpg"),
           )
         ],
       ),

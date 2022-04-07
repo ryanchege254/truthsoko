@@ -3,6 +3,16 @@ class Product {
 
   Product({this.title, this.image});
 }
+/*class Product{
+  int id;
+  String name ;
+  String category ;
+  String image ;
+  double price ;
+  bool isliked ;
+  bool isSelected ;
+  Product({this.id,this.name, this.category, this.price, this.isliked,this.isSelected = false,this.image});
+}*/
 
 List<Product> demo_products = [
   Product(title: "Cabbage", image: "assets/images/img_1.png"),
