@@ -1,255 +1,214 @@
-import 'dart:math' as math;
-import 'dart:ui';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-const double minHeight = 120;
-const double iconStartSize = 44;
-const double iconEndSize = 120;
-const double iconStartMarginTop = 36;
-const double iconEndMarginTop = 80;
-const double iconsVerticalSpacing = 24;
-const double iconsHorizontalSpacing = 16;
+import '../../../src/Widget/color.dart';
 
 class ProductBottomSheet extends StatefulWidget {
   const ProductBottomSheet({Key? key}) : super(key: key);
 
   @override
-  _ExhibitionBottomSheetState createState() => _ExhibitionBottomSheetState();
+  _ProductBottomSheet createState() => _ProductBottomSheet();
 }
 
-class _ExhibitionBottomSheetState extends State<ProductBottomSheet>
-    with SingleTickerProviderStateMixin {
-  AnimationController? _controller;
-
-  double get maxHeight => MediaQuery.of(context).size.height;
-
-  double? get headerTopMargin =>
-      lerp(20, 20 + MediaQuery.of(context).padding.top);
-
-  double? get headerFontSize => lerp(14, 24);
-
-  double? get itemBorderRadius => lerp(8, 24);
-
-  double? get iconLeftBorderRadius => itemBorderRadius;
-
-  double? get iconRightBorderRadius => lerp(8, 0);
-
-  double? get iconSize => lerp(iconStartSize, iconEndSize);
-
-  double iconTopMargin(int index) =>
-      lerp(iconStartMarginTop,
-          iconEndMarginTop + index * (iconsVerticalSpacing + iconEndSize))! +
-      headerTopMargin!;
-
-  double? iconLeftMargin(int index) =>
-      lerp(index * (iconsHorizontalSpacing + iconStartSize), 0);
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
-  }
-
-  double? lerp(double min, double max) =>
-      lerpDouble(min, max, _controller!.value);
+class _ProductBottomSheet extends State<ProductBottomSheet> {
+  double initialPercentage = 0.15;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller!,
-      builder: (context, child) {
-        return Positioned(
-          height: lerp(minHeight, maxHeight),
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: GestureDetector(
-            onTap: _toggle,
-            onVerticalDragUpdate: _handleDragUpdate,
-            onVerticalDragEnd: _handleDragEnd,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 28, 73, 22),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-              ),
-              child: Stack(
-                children: <Widget>[
-                  const MenuButton(),
-                  SheetHeader(
-                    fontSize: headerFontSize!,
-                    topMargin: headerTopMargin!,
-                    key: null,
-                  ),
-                  for (Event event in events) _buildFullItem(event),
-                  for (Event event in events) _buildIcon(event),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildIcon(Event event) {
-    int index = events.indexOf(event);
-    return Positioned(
-      height: iconSize,
-      width: iconSize,
-      top: iconTopMargin(index),
-      left: iconLeftMargin(index),
-      child: ClipRRect(
-        borderRadius: BorderRadius.horizontal(
-          left: Radius.circular(iconLeftBorderRadius!),
-          right: Radius.circular(iconRightBorderRadius!),
-        ),
-        child: Image.asset(
-          'assets/images/${event.assetName}',
-          fit: BoxFit.cover,
-          alignment: Alignment(lerp(1, 0)!, 0),
-        ),
+    return Positioned.fill(
+      child: DraggableScrollableSheet(
+        minChildSize: initialPercentage,
+        initialChildSize: initialPercentage,
+        builder: (context, scrollController) {
+          return AnimatedBuilder(
+            animation: scrollController,
+            builder: (context, child) {
+              double percentage = initialPercentage;
+              if (scrollController.hasClients) {
+                percentage = (scrollController.position.viewportDimension) /
+                    (MediaQuery.of(context).size.height);
+              }
+              double scaledPercentage =
+                  (percentage - initialPercentage) / (1 - initialPercentage);
+              return Container(
+                padding: const EdgeInsets.only(left: 32),
+                decoration: const BoxDecoration(
+                  color: Global.darkGreen,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+                ),
+                child: Stack(
+                  children: <Widget>[
+                    Opacity(
+                      opacity: percentage == 1 ? 1 : 0,
+                      child: ListView.builder(
+                        padding: const EdgeInsets.only(right: 32, top: 128),
+                        controller: scrollController,
+                        itemCount: 20,
+                        itemBuilder: (context, index) {
+                          Event event = events[index % 3];
+                          return MyEventItem(
+                            event: event,
+                            percentageCompleted: percentage,
+                          );
+                        },
+                      ),
+                    ),
+                    ...events.map((event) {
+                      int index = events.indexOf(event);
+                      int heightPerElement = 120 + 8 + 8;
+                      double widthPerElement =
+                          40 + percentage * 80 + 8 * (1 - percentage);
+                      double leftOffset = widthPerElement *
+                          (index > 4 ? index + 2 : index) *
+                          (1 - scaledPercentage);
+                      return Positioned(
+                        top: 44.0 +
+                            scaledPercentage * (128 - 44) +
+                            index * heightPerElement * scaledPercentage,
+                        left: leftOffset,
+                        right: 32 - leftOffset,
+                        child: IgnorePointer(
+                          ignoring: true,
+                          child: Opacity(
+                            opacity: percentage == 1 ? 0 : 1,
+                            child: MyEventItem(
+                              event: event,
+                              percentageCompleted: percentage,
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                    SheetHeader(
+                      fontSize: 14 + percentage * 8,
+                      topMargin:
+                          16 + percentage * MediaQuery.of(context).padding.top,
+                    ),
+                    const MenuButton(),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
-
-  Widget _buildFullItem(Event event) {
-    int index = events.indexOf(event);
-    return ExpandedEventItem(
-      topMargin: iconTopMargin(index),
-      leftMargin: iconLeftMargin(index)!,
-      height: iconSize!,
-      isVisible: _controller!.status == AnimationStatus.completed,
-      borderRadius: itemBorderRadius!,
-      title: event.title,
-      date: event.date,
-    );
-  }
-
-  void _toggle() {
-    final bool isOpen = _controller!.status == AnimationStatus.completed;
-    _controller!.fling(velocity: isOpen ? -2 : 2);
-  }
-
-  void _handleDragUpdate(DragUpdateDetails details) {
-    _controller!.value -= (details.primaryDelta! / maxHeight);
-  }
-
-  void _handleDragEnd(DragEndDetails details) {
-    if (_controller!.isAnimating ||
-        _controller!.status == AnimationStatus.completed) return;
-
-    final double flingVelocity =
-        details.velocity.pixelsPerSecond.dy / maxHeight;
-    if (flingVelocity < 0.0) {
-      _controller!.fling(velocity: math.max(2.0, -flingVelocity));
-    } else if (flingVelocity > 0.0) {
-      _controller!.fling(velocity: math.min(-2.0, -flingVelocity));
-    } else {
-      _controller!.fling(velocity: _controller!.value < 0.5 ? -2.0 : 2.0);
-    }
-  }
 }
 
-class ExpandedEventItem extends StatelessWidget {
-  final double topMargin;
-  final double leftMargin;
-  final double height;
-  final bool isVisible;
-  final double borderRadius;
-  final String title;
-  final String date;
+class MyEventItem extends StatelessWidget {
+  final Event event;
+  final double percentageCompleted;
 
-  const ExpandedEventItem(
-      {Key? key,
-      required this.topMargin,
-      required this.height,
-      required this.isVisible,
-      required this.borderRadius,
-      required this.title,
-      required this.date,
-      required this.leftMargin})
+  const MyEventItem(
+      {Key? key, required this.event, required this.percentageCompleted})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      top: topMargin,
-      left: leftMargin,
-      right: 0,
-      height: height,
-      child: AnimatedOpacity(
-        opacity: isVisible ? 1 : 0,
-        duration: const Duration(milliseconds: 200),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius),
-            color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Transform.scale(
+        alignment: Alignment.topLeft,
+        scale: 1 / 3 + 2 / 3 * percentageCompleted,
+        child: SizedBox(
+          height: 120,
+          child: Row(
+            children: <Widget>[
+              ClipRRect(
+                borderRadius: BorderRadius.horizontal(
+                  left: const Radius.circular(16),
+                  right: Radius.circular(16 * (1 - percentageCompleted)),
+                ),
+                child: Image.asset(
+                  'assets/images/${event.assetName}',
+                  width: 120,
+                  height: 120,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Expanded(
+                child: Opacity(
+                  opacity: max(0, percentageCompleted * 2 - 1),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      borderRadius:
+                          BorderRadius.horizontal(right: Radius.circular(16)),
+                      color: Colors.white,
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: _buildContent(),
+                  ),
+                ),
+              )
+            ],
           ),
-          padding: EdgeInsets.only(left: height).add(const EdgeInsets.all(8)),
-          child: _buildContent(),
         ),
       ),
     );
   }
 
   Widget _buildContent() {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Text(title, style: const TextStyle(fontSize: 16)),
-          const SizedBox(height: 8),
-          Row(
-            children: <Widget>[
-              Text(
-                '1 ticket',
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
+    return Column(
+      children: <Widget>[
+        Text(event.title, style: const TextStyle(fontSize: 16)),
+        const SizedBox(height: 8),
+        Row(
+          children: <Widget>[
+            Text(
+              'Location',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 12,
+                color: Colors.grey.shade600,
               ),
-              const SizedBox(width: 8),
-              Text(
-                date,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w300,
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              event.date,
+              style: const TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: 12,
+                color: Colors.grey,
               ),
-            ],
-          ),
-          const Spacer(),
-          Row(
-            children: <Widget>[
-              Icon(Icons.place, color: Colors.grey.shade400, size: 16),
-              Text(
-                'Science Park 10 25A',
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
-              )
-            ],
-          )
-        ],
-      ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        Row(
+          children: <Widget>[
+            Icon(Icons.place, color: Colors.grey.shade400, size: 16),
+            Text(
+              'Science Park 10 25A',
+              style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+            )
+          ],
+        )
+      ],
     );
   }
 }
 
 final List<Event> events = [
-  Event('img_1.png', 'Cabbage', '4.20-30'),
-  Event('img_2.png', 'Lettuce', '4.20-30'),
-  Event('img_4.png', 'Kales', '4.28-31'),
+  Event('img_1.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_2.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_3.png', 'Dawan District Guangdong Hong Kong', '4.28-31'),
+  Event('img_1.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_2.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_3.png', 'Dawan District Guangdong Hong Kong', '4.28-31'),
+  Event('img_4.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_1.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_2.png', 'Dawan District Guangdong Hong Kong', '4.28-31'),
+  Event('img_3.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_4.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_1.png', 'Dawan District Guangdong Hong Kong', '4.28-31'),
+  Event('img_2.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_3.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_4.png', 'Dawan District Guangdong Hong Kong', '4.28-31'),
+  Event('img_1.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_2.png', 'Shenzhen GLOBAL DESIGN AWARD 2018', '4.20-30'),
+  Event('img_3.png', 'Dawan District Guangdong Hong Kong', '4.28-31'),
 ];
 
 class Event {
@@ -270,13 +229,22 @@ class SheetHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      top: topMargin,
-      child: Text(
-        'All products',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w500,
+      left: 0,
+      right: 32,
+      child: IgnorePointer(
+        child: Container(
+          padding: EdgeInsets.only(top: topMargin, bottom: 12),
+          decoration: const BoxDecoration(
+            color: Color.fromARGB(255, 35, 73, 22),
+          ),
+          child: Text(
+            'Favorites',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: fontSize,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
         ),
       ),
     );
@@ -289,7 +257,7 @@ class MenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Positioned(
-      right: 0,
+      right: 12,
       bottom: 24,
       child: Icon(
         Icons.menu,

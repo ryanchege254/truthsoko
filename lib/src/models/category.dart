@@ -14,23 +14,23 @@ class Category {
     // Category(id: 0, image: '', name: ''),
     Category(
         id: 1,
-        name: "Sneakers",
-        image: 'assets/images/shoe_thumb_2.png',
+        name: "Vegatables",
+        image: 'assets/images/img_1.png',
         isSelected: true),
     Category(
         id: 2,
-        name: "Jacket",
-        image: 'assets/images/jacket.png',
+        name: "Legumes",
+        image: 'assets/images/img_2.png',
         isSelected: false),
     Category(
         id: 3,
-        name: "Watch",
-        image: 'assets/images/watch.png',
+        name: "Fruits",
+        image: 'assets/images/img_3.png',
         isSelected: false),
     Category(
         id: 4,
-        name: "Watch",
-        image: 'assets/images/watch.png',
+        name: "Cereals",
+        image: 'assets/images/img_4.png',
         isSelected: false),
   ];
 }

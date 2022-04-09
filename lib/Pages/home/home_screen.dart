@@ -5,7 +5,6 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_ticket_provider_mixin.da
 import 'package:google_fonts/google_fonts.dart';
 import 'package:truthsoko/Pages/home/components/Product_bottom_sheet.dart';
 import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
-import 'package:truthsoko/Pages/home/components/category.dart';
 import 'package:truthsoko/src/Widget/color.dart';
 import 'package:truthsoko/src/controllers/home_controller.dart';
 import 'package:truthsoko/src/models/Product.dart';
@@ -18,6 +17,8 @@ import 'components/cart_details_view.dart';
 import 'components/cart_short_view.dart';
 import 'components/header.dart';
 import 'components/product_card.dart';
+import 'components/sliding_cards.dart';
+import 'components/tabs.dart';
 
 // Today i will show you how to implement the animation
 // So starting project comes with the UI
@@ -259,7 +260,6 @@ class _HomeScreen extends State<HomeScreen>
         onHorizontalDragStart: _onDragStart,
         onHorizontalDragUpdate: _onDragUpdate,
         onHorizontalDragEnd: _onDragEnd,
-        onTap: toggle,
         child: AnimatedBuilder(
             animation: animationController,
             builder: (context, _) {
@@ -274,44 +274,26 @@ class _HomeScreen extends State<HomeScreen>
                       ..translate(slideAmount)
                       ..scale(contentScale, contentScale),
                     alignment: Alignment.centerLeft,
-                    child: SafeArea(
-                      child: Scaffold(
-                        appBar: AppBar(
-                          leading: IconButton(
-                            icon: const Icon(Icons.menu),
-                            onPressed: () {
-                              toggle();
-                            },
-                          ),
-                          shadowColor: Global.green,
-                          foregroundColor: Global.green,
-                          backgroundColor: Global.yellow,
-                          title: Text(
-                            "Welcome ",
-                            style: GoogleFonts.balooThambi2(),
-                          ),
-                        ),
-                        body: Stack(
-                          children: [
-                            Container(
-                                decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                        colors: [Global.orange, Global.white],
-                                        begin: Alignment.topCenter))),
-                            SafeArea(
-                              child: Column(
-                                children: const [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  SearchWidget(searchController: null),
-                                  Categories()
-                                ],
+                    child: Scaffold(
+                      body: Stack(
+                        children: [
+                          Column(
+                            children: [
+                              GestureDetector(
+                                  onTap: () => toggle(),
+                                  child: const HomeHeader()),
+                              const SizedBox(
+                                height: 10,
                               ),
-                            ),
-                            const ProductBottomSheet()
-                          ],
-                        ),
+                              const SearchWidget(searchController: null),
+                              //const Categories(),
+                              const Tabs(),
+                              const SizedBox(height: 8),
+                              const SlidingCardsView(),
+                            ],
+                          ),
+                          const ProductBottomSheet()
+                        ],
                       ),
                     ),
                   )

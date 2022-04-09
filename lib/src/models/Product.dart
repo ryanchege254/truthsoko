@@ -8,7 +8,9 @@ class Product {
   String name ;
   String category ;
   String image ;
+  String location;
   double price ;
+  double quantity;
   bool isliked ;
   bool isSelected ;
   Product({this.id,this.name, this.category, this.price, this.isliked,this.isSelected = false,this.image});
