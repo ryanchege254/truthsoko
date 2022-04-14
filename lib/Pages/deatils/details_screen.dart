@@ -8,11 +8,10 @@ import 'components/cart_counter.dart';
 
 class DetailsScreen extends StatefulWidget {
   const DetailsScreen(
-      {Key? key, required this.product, required this.onProductAdd})
+      {Key? key, required this.product,})
       : super(key: key);
 
   final Product product;
-  final VoidCallback onProductAdd;
 
   @override
   _DetailsScreenState createState() => _DetailsScreenState();
@@ -23,25 +22,6 @@ class _DetailsScreenState extends State<DetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: SafeArea(
-        child: SizedBox(
-          width: double.infinity,
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: Global.defaultPadding),
-            child: ElevatedButton(
-              onPressed: () {
-                widget.onProductAdd();
-                setState(() {
-                  _cartTag = '_cartTag';
-                });
-                Navigator.pop(context);
-              },
-              child: const Text("Add to Cart"),
-            ),
-          ),
-        ),
-      ),
       backgroundColor: Colors.white,
       appBar: buildAppBar(),
       body: Column(

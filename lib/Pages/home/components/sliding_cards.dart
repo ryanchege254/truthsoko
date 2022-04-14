@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:truthsoko/src/Widget/extentions.dart';
 import 'dart:math' as math;
 
 import '../../../src/Widget/color.dart';
@@ -32,7 +35,7 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.50,
+      height: MediaQuery.of(context).size.height * 0.70,
       child: PageView(
         controller: pageController,
         children: <Widget>[
@@ -74,7 +77,7 @@ class SlidingCard extends StatelessWidget {
     return Transform.translate(
       offset: Offset(-32 * gauss * offset.sign, 0),
       child: Card(
-        margin: const EdgeInsets.only(left: 8, right: 8, bottom: 30),
+        margin: const EdgeInsets.only(left: 8, right: 8, bottom: 150),
         elevation: 8,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         child: Container(
@@ -121,56 +124,75 @@ class CardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Transform.translate(
-            offset: Offset(8 * offset, 0),
-            child: Text(name, style: const TextStyle(fontSize: 20)),
-          ),
-          const SizedBox(height: 8),
-          Transform.translate(
-            offset: Offset(32 * offset, 0),
-            child: Text(
-              date,
-              style: const TextStyle(color: Colors.grey),
+    return ChangeNotifierProvider<CardContentProvider>(
+        create: (context) => CardContentProvider(),
+        child: Consumer(
+            builder: (context, CardContentProvider cardProvider, child) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Transform.translate(
+                  offset: Offset(8 * offset, 0),
+                  child: Text(name, style: const TextStyle(fontSize: 20)),
+                ),
+                const SizedBox(height: 8),
+                Transform.translate(
+                  offset: Offset(32 * offset, 0),
+                  child: Text(
+                    date,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ),
+                const Spacer(),
+                Row(
+                  children: <Widget>[
+                    Transform.translate(
+                      offset: Offset(48 * offset, 0),
+                      child: InkWell(
+                        onTap: () {
+                          cardProvider.onLiked = !cardProvider.onLiked;
+                        },
+                        child: SizedBox(
+                          height: 25,
+                          width: 25,
+                          child: SvgPicture.asset(
+                            "assets/icons/heart.svg",
+                            // ignore: dead_code
+                            color: context.read<CardContentProvider>().onLiked
+                                ? Global.orange
+                                : Global.green,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Transform.translate(
+                      offset: Offset(32 * offset, 0),
+                      child: const Text(
+                        '0.00 \$',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                  ],
+                )
+              ],
             ),
-          ),
-          const Spacer(),
-          Row(
-            children: <Widget>[
-              Transform.translate(
-                offset: Offset(48 * offset, 0),
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all(Global.white),
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(32)))),
-                  child: Transform.translate(
-                    offset: Offset(24 * offset, 0),
-                    child: const Text('Reserve'),
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-              const Spacer(),
-              Transform.translate(
-                offset: Offset(32 * offset, 0),
-                child: const Text(
-                  '0.00 \$',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-            ],
-          )
-        ],
-      ),
-    );
+          );
+        }));
+  }
+}
+
+class CardContentProvider extends ChangeNotifier {
+  get onLiked => _onLiked;
+  bool _onLiked = false;
+  set onLiked(value) {
+    _onLiked = value;
+    notifyListeners();
   }
 }

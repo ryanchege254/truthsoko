@@ -10,11 +10,12 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     Key? key,
     required this.product,
+    required this.percentageComplete,
     required this.press,
   }) : super(key: key);
 
   final Product product;
-
+  final double percentageComplete;
   final VoidCallback press;
 
   @override

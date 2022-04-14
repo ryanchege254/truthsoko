@@ -1,29 +1,22 @@
 import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_ticket_provider_mixin.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:truthsoko/Pages/Categories/Category_screen.dart';
 import 'package:truthsoko/Pages/home/components/Product_bottom_sheet.dart';
 import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
-import 'package:truthsoko/src/Widget/color.dart';
+import 'package:truthsoko/Utils/Auth/screen_changeProvider.dart';
 import 'package:truthsoko/src/controllers/home_controller.dart';
-import 'package:truthsoko/src/models/Product.dart';
-import 'package:truthsoko/src/models/ProductItem.dart';
-import 'package:truthsoko/Pages/deatils/details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:truthsoko/Pages/home/components/Drawer.dart';
-import '../../src/Widget/bezierContainer.dart';
-import 'components/cart_details_view.dart';
-import 'components/cart_short_view.dart';
+import '../Notification/Notification.dart';
 import 'components/header.dart';
-import 'components/product_card.dart';
 import 'components/sliding_cards.dart';
 import 'components/tabs.dart';
 
 // Today i will show you how to implement the animation
 // So starting project comes with the UI
 // Run the app
-
 /*class HomeScreen extends StatelessWidget {
   final controller = HomeController();
 
@@ -177,6 +170,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
+  final drawer = const DrawerWidget();
+
   static const double maxSlide = 225.0;
   final controller = HomeController();
   void _onVerticalGesture(DragUpdateDetails details) {
@@ -192,9 +187,6 @@ class _HomeScreen extends State<HomeScreen>
   late AnimationController animationController;
   bool _canBeDragged = false;
 
-  final drawer = Container(
-    color: Colors.blue,
-  );
   @override
   void initState() {
     // TODO: implement initState
@@ -246,60 +238,94 @@ class _HomeScreen extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
+    //final height = MediaQuery.of(context).size.height;
 
-    return WillPopScope(
-      onWillPop: () async {
-        if (animationController.isCompleted) {
-          close();
-          return false;
-        }
-        return true;
-      },
-      child: GestureDetector(
-        onHorizontalDragStart: _onDragStart,
-        onHorizontalDragUpdate: _onDragUpdate,
-        onHorizontalDragEnd: _onDragEnd,
-        child: AnimatedBuilder(
-            animation: animationController,
-            builder: (context, _) {
-              double animValue = animationController.value;
-              final slideAmount = maxSlide * animValue;
-              final contentScale = 1.0 - (0.3 * animValue);
-              return Stack(
-                children: [
-                  const DrawerWidget(),
-                  Transform(
-                    transform: Matrix4.identity()
-                      ..translate(slideAmount)
-                      ..scale(contentScale, contentScale),
-                    alignment: Alignment.centerLeft,
-                    child: Scaffold(
-                      body: Stack(
-                        children: [
-                          Column(
-                            children: [
-                              GestureDetector(
-                                  onTap: () => toggle(),
-                                  child: const HomeHeader()),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const SearchWidget(searchController: null),
-                              //const Categories(),
-                              const Tabs(),
-                              const SizedBox(height: 8),
-                              const SlidingCardsView(),
-                            ],
-                          ),
-                          const ProductBottomSheet()
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              );
-            }),
+    return ChangeNotifierProvider.value(
+      value: ScreenChange(),
+      child: Consumer<ScreenChange>(
+          builder: (context, ScreenChange screenChange, child) {
+        return WillPopScope(
+          onWillPop: () async {
+            if (animationController.isCompleted) {
+              close();
+              return false;
+            }
+            return true;
+          },
+          child: GestureDetector(
+            onHorizontalDragStart: _onDragStart,
+            onHorizontalDragUpdate: _onDragUpdate,
+            onHorizontalDragEnd: _onDragEnd,
+            child: AnimatedBuilder(
+                animation: animationController,
+                builder: (context, _) {
+                  double animValue = animationController.value;
+                  final slideAmount = maxSlide * animValue;
+                  final contentScale = 1.0 - (0.3 * animValue);
+
+                  return Stack(
+                    children: [
+                      const DrawerWidget(),
+                      Transform(
+                        transform: Matrix4.identity()
+                          ..translate(slideAmount)
+                          ..scale(contentScale, contentScale),
+                        alignment: Alignment.centerLeft,
+                        child: ChangeNotifierProvider.value(
+                          value: ScreenChange(),
+                          child: Consumer<ScreenChange>(
+                              builder: (context, ScreenChange change, child) {
+                            switch (change.changeHomeState) {
+                              case PageState.homescreen:
+                                return Home();
+                              case PageState.categories:
+                                return CategoryScreen();
+                              case PageState.notification:
+                                return NotificationScreen();
+                              default:
+                            }
+                            return Center(
+                                child: Text("Something went wrong",
+                                    style: GoogleFonts.abel(
+                                      fontSize: 20,
+                                    )));
+                          }),
+                        ),
+                      )
+                    ],
+                  );
+                }),
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class Home extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              GestureDetector(
+                  onTap: () => _HomeScreen().toggle(),
+                  child: const HomeHeader()),
+              const SizedBox(
+                height: 10,
+              ),
+              const SearchWidget(searchController: null),
+              const SizedBox(height: 8),
+              const Tabs(),
+              const SizedBox(height: 8),
+              const SlidingCardsView(),
+            ],
+          ),
+          const ProductBottomSheet()
+        ],
       ),
     );
   }

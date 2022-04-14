@@ -30,8 +30,9 @@ class UserRepository with ChangeNotifier {
       BuildContext _context, String email, String password) async {
     try {
       _status = Status.Authenticating;
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
       notifyListeners();
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+
       return true;
     } on FirebaseAuthException catch (e) {
       _status = Status.Unauthenticated;

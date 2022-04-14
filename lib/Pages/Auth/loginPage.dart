@@ -128,8 +128,6 @@ class _LoginPageState extends State<LoginPage> {
                 context, _email!.text.trim(), _password!.text.trim())) {
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text("Something Went Wrong")));
-            } else {
-              Navigator.of(context).pop();
             }
 
             /*ScaffoldMessenger.of(context).showSnackBar(
@@ -249,7 +247,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
-    //final model = Provider.of<TextviewModel>(context);
     @override
     void initState() {
       _email!.text = "";
@@ -333,9 +330,8 @@ class _LoginPageState extends State<LoginPage> {
                                 const SizedBox(height: 20),
                                 provider.status == Status.Authenticating
                                     ? const Padding(
-                                        padding: EdgeInsets.all(64),
+                                        padding: EdgeInsets.all(80),
                                         child: LoadingIndicator(
-                                          strokeWidth: 5,
                                           indicatorType:
                                               Indicator.ballGridPulse,
                                           colors: [

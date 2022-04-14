@@ -1,8 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:truthsoko/Pages/Categories/components/category.dart';
+import 'package:truthsoko/Pages/home/components/product_card.dart';
 
 import '../../../src/Widget/color.dart';
+import '../../../src/controllers/home_controller.dart';
+import '../../../src/models/Product.dart';
+import '../../deatils/details_screen.dart';
 
 class ProductBottomSheet extends StatefulWidget {
   const ProductBottomSheet({Key? key}) : super(key: key);
@@ -13,6 +18,7 @@ class ProductBottomSheet extends StatefulWidget {
 
 class _ProductBottomSheet extends State<ProductBottomSheet> {
   double initialPercentage = 0.15;
+  final controller = HomeController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,21 +47,47 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                   children: <Widget>[
                     Opacity(
                       opacity: percentage == 1 ? 1 : 0,
-                      child: ListView.builder(
+                      child: GridView.builder(
+                        scrollDirection: Axis.vertical,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.75,
+                          mainAxisSpacing: Global.defaultPadding,
+                          crossAxisSpacing: Global.defaultPadding,
+                        ),
                         padding: const EdgeInsets.only(right: 32, top: 128),
                         controller: scrollController,
-                        itemCount: 20,
+                        itemCount: demo_products.length,
                         itemBuilder: (context, index) {
-                          Event event = events[index % 3];
-                          return MyEventItem(
-                            event: event,
-                            percentageCompleted: percentage,
-                          );
+                          Product product = demo_products[index % 3];
+                          return ProductCard(
+                              product: product,
+                              percentageComplete: percentage,
+                              press: () {
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    transitionDuration:
+                                        const Duration(milliseconds: 500),
+                                    reverseTransitionDuration:
+                                        const Duration(milliseconds: 500),
+                                    pageBuilder: (context, animation,
+                                            secondaryAnimation) =>
+                                        FadeTransition(
+                                      opacity: animation,
+                                      child: DetailsScreen(
+                                        product: demo_products[index],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              });
                         },
                       ),
                     ),
-                    ...events.map((event) {
-                      int index = events.indexOf(event);
+                    ...demo_products.map((product) {
+                      int index = demo_products.indexOf(product);
                       int heightPerElement = 120 + 8 + 8;
                       double widthPerElement =
                           40 + percentage * 80 + 8 * (1 - percentage);
@@ -72,10 +104,9 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                           ignoring: true,
                           child: Opacity(
                             opacity: percentage == 1 ? 0 : 1,
-                            child: MyEventItem(
-                              event: event,
-                              percentageCompleted: percentage,
-                            ),
+                            child: MyProductItem(
+                                product: product,
+                                percentageCompleted: percentage),
                           ),
                         ),
                       );
@@ -97,12 +128,12 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
   }
 }
 
-class MyEventItem extends StatelessWidget {
-  final Event event;
+class MyProductItem extends StatelessWidget {
+  final Product product;
   final double percentageCompleted;
 
-  const MyEventItem(
-      {Key? key, required this.event, required this.percentageCompleted})
+  const MyProductItem(
+      {Key? key, required this.product, required this.percentageCompleted})
       : super(key: key);
 
   @override
@@ -122,7 +153,7 @@ class MyEventItem extends StatelessWidget {
                   right: Radius.circular(16 * (1 - percentageCompleted)),
                 ),
                 child: Image.asset(
-                  'assets/images/${event.assetName}',
+                  '${product.image}',
                   width: 120,
                   height: 120,
                   fit: BoxFit.cover,
@@ -152,7 +183,7 @@ class MyEventItem extends StatelessWidget {
   Widget _buildContent() {
     return Column(
       children: <Widget>[
-        Text(event.title, style: const TextStyle(fontSize: 16)),
+        Text(product.title.toString(), style: const TextStyle(fontSize: 16)),
         const SizedBox(height: 8),
         Row(
           children: <Widget>[
@@ -165,9 +196,9 @@ class MyEventItem extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              event.date,
-              style: const TextStyle(
+            const Text(
+              '4.20-30',
+              style: TextStyle(
                 fontWeight: FontWeight.w300,
                 fontSize: 12,
                 color: Colors.grey,
@@ -238,7 +269,7 @@ class SheetHeader extends StatelessWidget {
             color: Color.fromARGB(255, 35, 73, 22),
           ),
           child: Text(
-            'Favorites',
+            'Recommended',
             style: TextStyle(
               color: Colors.white,
               fontSize: fontSize,
