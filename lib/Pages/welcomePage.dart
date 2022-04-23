@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:loading_indicator/loading_indicator.dart';
-import 'package:truthsoko/src/Widget/color.dart';
+import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/Pages/Auth/loginPage.dart';
 import 'package:truthsoko/Pages/Auth/signup.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:truthsoko/src/Widget/onboarding.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key, this.title}) : super(key: key);

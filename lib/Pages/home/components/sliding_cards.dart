@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:truthsoko/src/Widget/extentions.dart';
+import 'package:truthsoko/src/Widget/fav_btn.dart';
 import 'dart:math' as math;
 
-import '../../../src/Widget/color.dart';
+import '../../../src/Widget/constants.dart';
 
 class SlidingCardsView extends StatefulWidget {
   const SlidingCardsView({Key? key}) : super(key: key);
@@ -154,17 +153,8 @@ class CardContent extends StatelessWidget {
                         onTap: () {
                           cardProvider.onLiked = !cardProvider.onLiked;
                         },
-                        child: SizedBox(
-                          height: 25,
-                          width: 25,
-                          child: SvgPicture.asset(
-                            "assets/icons/heart.svg",
-                            // ignore: dead_code
-                            color: context.read<CardContentProvider>().onLiked
-                                ? Global.orange
-                                : Global.green,
-                          ),
-                        ),
+                        child: const SizedBox(
+                            height: 25, width: 25, child: FavBtn()),
                       ),
                     ),
                     const Spacer(),

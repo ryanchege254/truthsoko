@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
-import 'package:truthsoko/src/Widget/textfield_widget.dart';
 
-import '../../../src/Widget/color.dart';
+
+import '../../../src/Widget/constants.dart';
 
 class SearchWidget extends StatelessWidget {
   const SearchWidget({

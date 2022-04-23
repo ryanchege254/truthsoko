@@ -8,7 +8,7 @@ import 'package:truthsoko/src/models/textview_model.dart';
 import 'package:truthsoko/Pages/Auth/signup.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:truthsoko/src/Widget/bezierContainer.dart';
-import 'package:truthsoko/src/Widget/color.dart';
+import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/src/Widget/textfield_widget.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
@@ -235,19 +235,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-/*  Widget _emailPasswordWidget() {
-    return Column(
-      children: <Widget>[
-        _entryField("Email id", Icons.email, "Email"),
-        _entryField("Password", Icons.password, "Password", isPassword: true),
-      ],
-    );
-  }
-*/
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     @override
+    // ignore: unused_element
     void initState() {
       _email!.text = "";
       _password!.text = '';

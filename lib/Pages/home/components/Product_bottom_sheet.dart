@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:truthsoko/Pages/Categories/components/category.dart';
 import 'package:truthsoko/Pages/home/components/product_card.dart';
 
-import '../../../src/Widget/color.dart';
+import '../../../src/Widget/constants.dart';
 import '../../../src/controllers/home_controller.dart';
 import '../../../src/models/Product.dart';
 import '../../deatils/details_screen.dart';
@@ -62,6 +62,7 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                         itemBuilder: (context, index) {
                           Product product = demo_products[index % 3];
                           return ProductCard(
+                            index:index,
                               product: product,
                               percentageComplete: percentage,
                               press: () {

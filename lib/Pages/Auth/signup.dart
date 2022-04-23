@@ -8,7 +8,7 @@ import 'package:truthsoko/src/Widget/textfield_widget.dart';
 import 'package:truthsoko/Pages/Auth/loginPage.dart';
 import 'package:page_transition/page_transition.dart';
 
-import 'package:truthsoko/src/Widget/color.dart';
+import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/src/models/textview_model.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -21,7 +21,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final TextEditingController? _username = TextEditingController();
   final TextEditingController? _email = TextEditingController();
   final TextEditingController? _passwordController = TextEditingController();
   final TextEditingController? _confirmpasswordController =
@@ -50,29 +49,7 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _entryField(String title, {bool isPassword = false}) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          TextField(
-              obscureText: isPassword,
-              decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  fillColor: Color(0xfff3f3f4),
-                  filled: true))
-        ],
-      ),
-    );
-  }
+  
 
   /*Widget _submitButton(context) {
     return GestureDetector(
@@ -175,11 +152,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
 
-    @override
-    void dispose() {
-      super.dispose();
-    }
-
+    
     return Scaffold(
       key: _key,
       body: SingleChildScrollView(

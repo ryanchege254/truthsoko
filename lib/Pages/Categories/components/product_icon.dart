@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:truthsoko/src/models/category.dart';
-import 'package:truthsoko/src/Widget/color.dart';
+import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/src/themes/theme.dart';
 import 'package:truthsoko/src/themes/light_color.dart';
 import 'package:truthsoko/src/Widget/extentions.dart';

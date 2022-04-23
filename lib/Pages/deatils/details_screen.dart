@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:truthsoko/src/Widget/color.dart';
+import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/src/Widget/fav_btn.dart';
 import 'package:truthsoko/src/Widget/price.dart';
 import 'package:truthsoko/src/models/Product.dart';

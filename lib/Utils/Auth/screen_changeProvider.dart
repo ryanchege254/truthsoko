@@ -10,16 +10,9 @@ enum PageState {
 }
 
 class ScreenChange extends ChangeNotifier {
-  PageState homeState = PageState.categories;
-  PageState get changeHomeState => homeState;
-  get activeTab => _activeTab;
-  bool _activeTab = false;
-  set activeTab(value) {
-    _activeTab = value;
-    notifyListeners();
-  }
-
-  set changeHomeState(PageState state) {
+  PageState homeState = PageState.homescreen;
+  PageState get state => homeState;
+  void changeHomeState(PageState state) {
     homeState = state;
     notifyListeners();
   }

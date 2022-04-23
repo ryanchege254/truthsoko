@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:truthsoko/src/Widget/color.dart';
+import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/src/models/textview_model.dart';
 

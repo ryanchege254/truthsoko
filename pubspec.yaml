@@ -45,6 +45,7 @@ dependencies:
   loading_indicator: ^3.0.3
   flutter_svg: ^1.0.3
   get: ^4.6.1
+  font_awesome_flutter: ^9.0.0
 
 dev_dependencies:
   flutter_test:

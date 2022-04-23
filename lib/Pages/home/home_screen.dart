@@ -2,15 +2,19 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:truthsoko/Pages/About/About.dart';
 import 'package:truthsoko/Pages/Categories/Category_screen.dart';
+import 'package:truthsoko/Pages/Profile/profile.dart';
 import 'package:truthsoko/Pages/home/components/Product_bottom_sheet.dart';
 import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
+import 'package:truthsoko/Pages/home/components/favorites.dart';
+import 'package:truthsoko/Utils/Auth/Auth.dart';
 import 'package:truthsoko/Utils/Auth/screen_changeProvider.dart';
 import 'package:truthsoko/src/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:truthsoko/Pages/home/components/Drawer.dart';
 import '../Notification/Notification.dart';
-import 'components/header.dart';
+import '../Notification/components/header.dart';
 import 'components/sliding_cards.dart';
 import 'components/tabs.dart';
 
@@ -240,93 +244,112 @@ class _HomeScreen extends State<HomeScreen>
   Widget build(BuildContext context) {
     //final height = MediaQuery.of(context).size.height;
 
-    return ChangeNotifierProvider.value(
-      value: ScreenChange(),
-      child: Consumer<ScreenChange>(
-          builder: (context, ScreenChange screenChange, child) {
-        return WillPopScope(
-          onWillPop: () async {
-            if (animationController.isCompleted) {
-              close();
-              return false;
-            }
-            return true;
-          },
-          child: GestureDetector(
-            onHorizontalDragStart: _onDragStart,
-            onHorizontalDragUpdate: _onDragUpdate,
-            onHorizontalDragEnd: _onDragEnd,
-            child: AnimatedBuilder(
-                animation: animationController,
-                builder: (context, _) {
-                  double animValue = animationController.value;
-                  final slideAmount = maxSlide * animValue;
-                  final contentScale = 1.0 - (0.3 * animValue);
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: ScreenChange()),
+        ChangeNotifierProvider(
+            create: ((context) => UserRepository.instance())),
+      ],
+      child: WillPopScope(
+        onWillPop: () async {
+          if (animationController.isCompleted) {
+            close();
+            return false;
+          }
+          return true;
+        },
+        child: GestureDetector(
+          onHorizontalDragStart: _onDragStart,
+          onHorizontalDragUpdate: _onDragUpdate,
+          onHorizontalDragEnd: _onDragEnd,
+          child: AnimatedBuilder(
+            animation: animationController,
+            builder: (context, _) {
+              double animValue = animationController.value;
+              final slideAmount = maxSlide * animValue;
+              final contentScale = 1.0 - (0.3 * animValue);
 
-                  return Stack(
-                    children: [
-                      const DrawerWidget(),
-                      Transform(
-                        transform: Matrix4.identity()
-                          ..translate(slideAmount)
-                          ..scale(contentScale, contentScale),
-                        alignment: Alignment.centerLeft,
-                        child: ChangeNotifierProvider.value(
-                          value: ScreenChange(),
-                          child: Consumer<ScreenChange>(
-                              builder: (context, ScreenChange change, child) {
-                            switch (change.changeHomeState) {
-                              case PageState.homescreen:
-                                return Home();
-                              case PageState.categories:
-                                return CategoryScreen();
-                              case PageState.notification:
-                                return NotificationScreen();
-                              default:
-                            }
-                            return Center(
-                                child: Text("Something went wrong",
-                                    style: GoogleFonts.abel(
-                                      fontSize: 20,
-                                    )));
-                          }),
-                        ),
-                      )
-                    ],
-                  );
-                }),
+              return Stack(
+                children: [
+                  const DrawerWidget(),
+                  Transform(
+                    transform: Matrix4.identity()
+                      ..translate(slideAmount)
+                      ..scale(contentScale, contentScale),
+                    alignment: Alignment.centerLeft,
+                    child: Consumer<ScreenChange>(
+                        builder: (context, ScreenChange change, child) {
+                      switch (change.state) {
+                        case PageState.homescreen:
+                          return const Home();
+                        case PageState.categories:
+                          return const CategoryScreen();
+                        case PageState.notification:
+                          return const NotificationScreen();
+                        case PageState.about:
+                          return const AboutScreen();
+                        case PageState.account:
+                          return const ProfileScreen();
+                        default:
+                      }
+                      return Center(
+                          child: Text("Something went wrong",
+                              style: GoogleFonts.abel(
+                                fontSize: 20,
+                              )));
+                    }),
+                  )
+                ],
+              );
+            },
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }
 
 class Home extends StatelessWidget {
+  const Home({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    // ignore: todo
     // TODO: implement build
-    return Scaffold(
-      body: Stack(
-        children: [
-          Column(
+    return ChangeNotifierProvider.value(
+        value: TabSelected(),
+        child: Scaffold(
+          body: Stack(
             children: [
-              GestureDetector(
-                  onTap: () => _HomeScreen().toggle(),
-                  child: const HomeHeader()),
-              const SizedBox(
-                height: 10,
+              Column(
+                children: [
+                  GestureDetector(
+                      onTap: () => _HomeScreen().toggle(),
+                      child: const HomeHeader()),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const SearchWidget(searchController: null),
+                  const SizedBox(height: 8),
+                  const Tabs(),
+                  const SizedBox(height: 8),
+                  //const Favorites(),
+                  Consumer<TabSelected>(
+                      builder: (context, TabSelected tabselected, child) {
+                    switch (tabselected.selected) {
+                      case TabWidget.Favorites:
+                        return const Favorites();
+                      case TabWidget.Recent:
+                        return const SlidingCardsView();
+                      case TabWidget.New:
+                        return const SlidingCardsView();
+                    }
+                  }),
+                ],
               ),
-              const SearchWidget(searchController: null),
-              const SizedBox(height: 8),
-              const Tabs(),
-              const SizedBox(height: 8),
-              const SlidingCardsView(),
+              const ProductBottomSheet()
             ],
           ),
-          const ProductBottomSheet()
-        ],
-      ),
-    );
+        ));
   }
 }

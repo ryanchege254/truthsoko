@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:truthsoko/src/Widget/color.dart';
+import 'package:truthsoko/src/Widget/constants.dart';
 
 class Price extends StatelessWidget {
   const Price({

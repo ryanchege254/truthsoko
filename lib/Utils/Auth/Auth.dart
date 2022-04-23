@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
-import '../../src/Widget/color.dart';
+import '../../src/Widget/constants.dart';
 
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
