@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../../src/Widget/constants.dart';
 import '../../../src/Widget/fav_btn.dart';
-import '../../../src/Widget/price.dart';
+import '../../Details/components/price.dart';
 import '../../../src/models/Product.dart';
-import '../../deatils/details_screen.dart';
+import '../../Details/details_screen.dart';
 
 class Favorites extends StatelessWidget {
   const Favorites({Key? key}) : super(key: key);
@@ -20,9 +20,9 @@ class Favorites extends StatelessWidget {
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: demo_products.length,
+            itemCount: demo_productsModel.length,
             itemBuilder: (BuildContext context, int index) {
-              Product product = demo_products[index % 3];
+              ProductModel product = demo_productsModel[index % 3];
 
               return FavoriteCard(
                 percentageComplete: 0,
@@ -37,7 +37,7 @@ class Favorites extends StatelessWidget {
                           FadeTransition(
                         opacity: animation,
                         child: DetailsScreen(
-                          product: demo_products[index],
+                          product: demo_productsModel[index],
                         ),
                       ),
                     ),
@@ -52,7 +52,7 @@ class Favorites extends StatelessWidget {
 }
 
 class FavoriteCard extends StatelessWidget {
-  final Product product;
+  final ProductModel product;
   final double percentageComplete;
   final VoidCallback press;
   const FavoriteCard({
@@ -75,9 +75,14 @@ class FavoriteCard extends StatelessWidget {
           )
         ],
         gradient: LinearGradient(
-            colors: [Global.orange, Global.white],
+            end: Alignment.bottomRight,
             begin: Alignment.topLeft,
-            end: Alignment.center),
+            colors: [
+              Global.green,
+              Global.orange,
+              Global.yellow,
+              Global.white,
+            ]),
         borderRadius: BorderRadius.all(
           Radius.circular(15),
         ),
@@ -87,11 +92,16 @@ class FavoriteCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: InkWell(
-              onTap: press,
-              child: Hero(
-                tag: product.image!,
-                child: Image.asset(product.image!),
+            child: Container(
+              decoration: const BoxDecoration(boxShadow: [
+                BoxShadow(spreadRadius: 1, blurRadius: 50, color: Global.white)
+              ]),
+              child: InkWell(
+                onTap: press,
+                child: Hero(
+                  tag: product.title!, // change to productID later
+                  child: Image.asset(product.image!),
+                ),
               ),
             ),
           ),

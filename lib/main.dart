@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/home/home_screen.dart';
@@ -19,6 +20,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -48,9 +53,13 @@ class App extends StatelessWidget {
             case Status.Unauthenticated:
               return const WelcomePage();
             case Status.Authenticating:
-              return const HomeScreen();
+              return HomeScreen(
+                user: user.user!,
+              );
             case Status.Authenticated:
-              return const HomeScreen();
+              return HomeScreen(
+                user: user.user!,
+              );
           }
         },
       ),

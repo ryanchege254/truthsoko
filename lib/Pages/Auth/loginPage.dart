@@ -235,7 +235,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;

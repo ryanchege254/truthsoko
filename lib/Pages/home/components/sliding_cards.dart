@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/src/Widget/fav_btn.dart';
+import 'package:truthsoko/src/models/Product.dart';
 import 'dart:math' as math;
 
 import '../../../src/Widget/constants.dart';
+import '../../Details/details_screen.dart';
 
 class SlidingCardsView extends StatefulWidget {
   const SlidingCardsView({Key? key}) : super(key: key);
@@ -33,23 +35,52 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
 
   @override
   Widget build(BuildContext context) {
+    
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.70,
       child: PageView(
         controller: pageController,
         children: <Widget>[
           SlidingCard(
-            name: 'Carrots',
-            date: 'Kisumu',
-            assetName: 'img_1.png',
+            product: demo_productsModel[1],
             offset: pageOffset,
+            press: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: const Duration(milliseconds: 500),
+                  reverseTransitionDuration: const Duration(milliseconds: 500),
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      FadeTransition(
+                    opacity: animation,
+                    child: DetailsScreen(
+                      product: demo_productsModel[1],
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
           SlidingCard(
-            name: 'Cabbages',
-            date: 'Nairobi',
-            assetName: 'img_2.png',
-            offset: pageOffset - 1,
-          ),
+            product: demo_productsModel[2],
+            offset: pageOffset,
+            press: () {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: const Duration(milliseconds: 500),
+                  reverseTransitionDuration: const Duration(milliseconds: 500),
+                  pageBuilder: (context, animation, secondaryAnimation) =>
+                      FadeTransition(
+                    opacity: animation,
+                    child: DetailsScreen(
+                      product: demo_productsModel[2],
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
         ],
       ),
     );
@@ -57,17 +88,15 @@ class _SlidingCardsViewState extends State<SlidingCardsView> {
 }
 
 class SlidingCard extends StatelessWidget {
-  final String name;
-  final String date;
-  final String assetName;
+  final  product;
+  final VoidCallback press;
   final double offset;
 
   const SlidingCard({
     Key? key,
-    required this.name,
-    required this.date,
-    required this.assetName,
+    required this.product,
     required this.offset,
+    required this.press,
   }) : super(key: key);
 
   @override
@@ -86,21 +115,24 @@ class SlidingCard extends StatelessWidget {
                   begin: Alignment.topCenter)),
           child: Column(
             children: <Widget>[
-              ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(32)),
-                child: Image.asset(
-                  'assets/images/$assetName',
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  alignment: Alignment(-offset.abs(), 0),
-                  fit: BoxFit.none,
+              InkWell(
+                onTap: press,
+                child: ClipRRect(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(32)),
+                  child: Image.asset(
+                    product.image!,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    alignment: Alignment(-offset.abs(), 0),
+                    fit: BoxFit.none,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
               Expanded(
                 child: CardContent(
-                  name: name,
-                  date: date,
+                  name: product.title!,
+                  date: product.location,
                   offset: gauss,
                 ),
               ),
@@ -161,7 +193,7 @@ class CardContent extends StatelessWidget {
                     Transform.translate(
                       offset: Offset(32 * offset, 0),
                       child: const Text(
-                        '0.00 \$',
+                        '0.00 \KES',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,

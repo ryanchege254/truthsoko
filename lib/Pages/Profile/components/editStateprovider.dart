@@ -58,5 +58,10 @@ class ProfileEdit {
         isSelected: false,
         subtitle: 'Kenya',
         action: ActionsWidget.EditCountry),
+    ProfileEdit(
+        title: "",
+        isSelected: false,
+        subtitle: '',
+        action: ActionsWidget.Normal),
   ];
 }

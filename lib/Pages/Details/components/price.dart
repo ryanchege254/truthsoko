@@ -12,7 +12,7 @@ class Price extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(
-        text: "\$",
+        text: "\KES ",
         style: Theme.of(context)
             .textTheme
             .subtitle1!
@@ -23,7 +23,7 @@ class Price extends StatelessWidget {
             style: const TextStyle(color: Colors.black),
           ),
           const TextSpan(
-            text: "/kg",
+            text: " /kg",
             style:
                 TextStyle(color: Colors.black26, fontWeight: FontWeight.normal),
           )

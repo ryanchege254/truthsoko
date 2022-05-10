@@ -52,7 +52,7 @@ class HomeHeader extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.menu),
-                onPressed: () {},
+                onPressed: () {HomeScreen.of(context)!.toggle();},
               ),
               const SizedBox(
                 width: 10,

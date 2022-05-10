@@ -6,37 +6,52 @@ import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/Profile/components/editStateprovider.dart';
 import 'package:truthsoko/src/Widget/textfield_widget.dart';
 import 'package:truthsoko/src/models/textview_model.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../Utils/Auth/Database/handleUsers.dart';
 import '../../../src/Widget/constants.dart';
+import '../../../src/models/User.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({Key? key}) : super(key: key);
+  final User user;
+  const EditProfile({Key? key, required this.user}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
+  final _userhandler = UserHandler();
   @override
   Widget build(BuildContext context) {
     final _oldPassController = TextEditingController();
     final _newPassController = TextEditingController();
+    final phone = TextEditingController();
+    final email = TextEditingController();
+    final username = TextEditingController();
 
     Widget _listTile(ValueChanged<ProfileEdit> onSelected, ProfileEdit model) {
       return Consumer<ProfileEditState>(builder: (context, edit, child) {
         return Column(
           children: [
             InkWell(
+              onDoubleTap: () {
+                edit.selected == ActionsWidget.Normal;
+              },
               onTap: () {
                 edit.onSelected(onSelected, model);
               },
-              child: ListTile(
-                focusColor: Global.yellow,
-                title: Text(model.title),
-                subtitle: Text(model.subtitle,
-                    style: GoogleFonts.aclonica(
-                        color: const Color.fromARGB(255, 162, 161, 161))),
-                trailing: const Icon(Icons.arrow_downward),
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: Global.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: ListTile(
+                  focusColor: Global.yellow,
+                  title: Text(model.title),
+                  subtitle: Text(model.subtitle,
+                      style: GoogleFonts.aclonica(
+                          color: const Color.fromARGB(255, 162, 161, 161))),
+                  trailing: const Icon(Icons.arrow_downward),
+                ),
               ),
             ),
             const SizedBox(
@@ -120,8 +135,9 @@ class _EditProfileState extends State<EditProfile> {
                 prefixIconData: Icons.phone_android_sharp,
                 suffixIconData: null,
                 obscureText: false,
+                // ignore: avoid_types_as_parameter_names
                 onChanged: (String) {},
-                controller: _oldPassController),
+                controller: phone),
             const SizedBox(
               height: 5,
             ),
@@ -139,7 +155,10 @@ class _EditProfileState extends State<EditProfile> {
               height: 5,
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                _userhandler.updateUser(
+                    UserModel(phone: phone.text), widget.user.uid);
+              },
               child: const Text("Submit"),
             )
           ],
@@ -172,7 +191,7 @@ class _EditProfileState extends State<EditProfile> {
                 suffixIconData: null,
                 obscureText: false,
                 onChanged: (String) {},
-                controller: _oldPassController),
+                controller: email),
             const SizedBox(
               height: 5,
             ),
@@ -190,7 +209,10 @@ class _EditProfileState extends State<EditProfile> {
               height: 5,
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                _userhandler.updateUser(
+                    UserModel(email: email.text), widget.user.uid);
+              },
               child: const Text("Submit"),
             )
           ],

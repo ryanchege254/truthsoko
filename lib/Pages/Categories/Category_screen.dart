@@ -1,15 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:truthsoko/Pages/Categories/components/category.dart';
 import 'package:flutter/material.dart';
 import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
 import '../../src/Widget/constants.dart';
 import '../../src/models/Product.dart';
-import '../deatils/details_screen.dart';
+import '../Details/details_screen.dart';
 import '../home/components/product_card.dart';
 import 'components/header.dart';
 
 class CategoryScreen extends StatelessWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
+  final User user;
+  const CategoryScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +51,11 @@ class CategoryScreen extends StatelessWidget {
                     crossAxisSpacing: Global.defaultPadding,
                   ),
                   padding: const EdgeInsets.only(right: 32, top: 80),
-                  itemCount: demo_products.length,
+                  itemCount: demo_productsModel.length,
                   itemBuilder: (context, index) {
-                    Product product = demo_products[index % 3];
+                    ProductModel product = demo_productsModel[index];
                     return ProductCard(
-                        index: index,
+                        //index: index,
                         product: product,
                         percentageComplete: 1,
                         press: () {
@@ -69,7 +71,7 @@ class CategoryScreen extends StatelessWidget {
                                       FadeTransition(
                                 opacity: animation,
                                 child: DetailsScreen(
-                                  product: demo_products[index],
+                                  product: demo_productsModel[index],
                                 ),
                               ),
                             ),

@@ -1,13 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:truthsoko/Pages/Profile/components/Help_center.dart';
+import 'package:truthsoko/Pages/Profile/components/RecentlyViewed.dart';
 import 'package:truthsoko/Pages/Profile/components/edit_profile.dart';
 import 'package:truthsoko/Utils/Auth/Auth.dart';
 import 'package:truthsoko/src/Widget/constants.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  final User user;
+  const ProfileScreen({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +87,7 @@ class ProfileScreen extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   ProfileWidget(
-                                    label: "Tools",
+                                    label: "Settings",
                                     icon: FontAwesomeIcons.toolbox,
                                     onClick: () {
                                       Navigator.push(
@@ -97,20 +101,52 @@ class ProfileScreen extends StatelessWidget {
                                                   secondaryAnimation) =>
                                               FadeTransition(
                                                   opacity: animation,
-                                                  child:EditProfile()),
+                                                  child: EditProfile(
+                                                      user: user)),
                                         ),
                                       );
                                     },
                                   ),
                                   ProfileWidget(
                                     label: "Help",
-                                    icon: Icons.question_answer_sharp,
-                                    onClick: () {},
+                                    icon: Icons.help_center,
+                                    onClick: () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          transitionDuration:
+                                              const Duration(milliseconds: 500),
+                                          reverseTransitionDuration:
+                                              const Duration(milliseconds: 500),
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              FadeTransition(
+                                                  opacity: animation,
+                                                  child: const HelpCenter()),
+                                        ),
+                                      );
+                                    },
                                   ),
                                   ProfileWidget(
                                     label: "Recently Viewed",
                                     icon: Icons.recent_actors_sharp,
-                                    onClick: () {},
+                                    onClick: () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          transitionDuration:
+                                              const Duration(milliseconds: 500),
+                                          reverseTransitionDuration:
+                                              const Duration(milliseconds: 500),
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              FadeTransition(
+                                                  opacity: animation,
+                                                  child:
+                                                      const RecentlyViewed()),
+                                        ),
+                                      );
+                                    },
                                   )
                                 ]),
                           ),

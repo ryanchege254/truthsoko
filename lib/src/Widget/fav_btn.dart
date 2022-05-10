@@ -7,7 +7,7 @@ import 'constants.dart';
 class FavBtn extends StatelessWidget {
   const FavBtn({
     Key? key,
-    this.radius = 12,
+    this.radius = 15,
   }) : super(key: key);
 
   final double radius;

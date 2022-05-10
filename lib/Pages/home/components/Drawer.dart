@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:truthsoko/Pages/home/home_screen.dart';
 import 'package:truthsoko/Utils/Auth/screen_changeProvider.dart';
-import 'package:truthsoko/Utils/Auth/Auth.dart';
 import '../../../src/Widget/constants.dart';
 
 class DrawerWidget extends StatelessWidget {
@@ -11,7 +11,6 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height;
     double blurRadius = 15;
     double spreadRadius = 3;
 
@@ -61,6 +60,7 @@ class DrawerWidget extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         screenChange.changeHomeState(PageState.homescreen);
+                        HomeScreen.of(context)!.toggle();
                         print("${screenChange.state}");
                       },
                       child: ListTile(
@@ -92,6 +92,8 @@ class DrawerWidget extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         screenChange.changeHomeState(PageState.categories);
+                        HomeScreen.of(context)!.toggle();
+
                         print("${screenChange.state}");
                       },
                       child: ListTile(
@@ -123,6 +125,8 @@ class DrawerWidget extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         screenChange.changeHomeState(PageState.account);
+                        HomeScreen.of(context)!.toggle();
+
                         print("${screenChange.state}");
                       },
                       child: ListTile(
@@ -154,6 +158,8 @@ class DrawerWidget extends StatelessWidget {
                     InkWell(
                       onTap: (() {
                         screenChange.changeHomeState(PageState.notification);
+                        HomeScreen.of(context)!.toggle();
+
                         print("${screenChange.state}");
                       }),
                       child: ListTile(
@@ -186,6 +192,8 @@ class DrawerWidget extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         screenChange.changeHomeState(PageState.about);
+                        HomeScreen.of(context)!.toggle();
+
                         print("${screenChange.state}");
                       },
                       child: ListTile(

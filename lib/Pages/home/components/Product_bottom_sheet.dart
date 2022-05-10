@@ -1,13 +1,12 @@
+// ignore: file_names
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:truthsoko/Pages/Categories/components/category.dart';
 import 'package:truthsoko/Pages/home/components/product_card.dart';
 
 import '../../../src/Widget/constants.dart';
-import '../../../src/controllers/home_controller.dart';
 import '../../../src/models/Product.dart';
-import '../../deatils/details_screen.dart';
+import '../../Details/details_screen.dart';
 
 class ProductBottomSheet extends StatefulWidget {
   const ProductBottomSheet({Key? key}) : super(key: key);
@@ -18,7 +17,7 @@ class ProductBottomSheet extends StatefulWidget {
 
 class _ProductBottomSheet extends State<ProductBottomSheet> {
   double initialPercentage = 0.15;
-  final controller = HomeController();
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +57,11 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                         ),
                         padding: const EdgeInsets.only(right: 32, top: 128),
                         controller: scrollController,
-                        itemCount: demo_products.length,
+                        itemCount: demo_productsModel.length,
                         itemBuilder: (context, index) {
-                          Product product = demo_products[index % 3];
+                          final product = demo_productsModel[index];
                           return ProductCard(
-                            index:index,
+                              //index:index,
                               product: product,
                               percentageComplete: percentage,
                               press: () {
@@ -78,7 +77,7 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                                         FadeTransition(
                                       opacity: animation,
                                       child: DetailsScreen(
-                                        product: demo_products[index],
+                                        product:product,
                                       ),
                                     ),
                                   ),
@@ -87,8 +86,8 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                         },
                       ),
                     ),
-                    ...demo_products.map((product) {
-                      int index = demo_products.indexOf(product);
+                    ...demo_productsModel.map((product) {
+                      int index = demo_productsModel.indexOf(product);
                       int heightPerElement = 120 + 8 + 8;
                       double widthPerElement =
                           40 + percentage * 80 + 8 * (1 - percentage);
@@ -130,7 +129,7 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
 }
 
 class MyProductItem extends StatelessWidget {
-  final Product product;
+  final ProductModel product;
   final double percentageCompleted;
 
   const MyProductItem(

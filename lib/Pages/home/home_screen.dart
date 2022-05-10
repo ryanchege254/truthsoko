@@ -10,11 +10,10 @@ import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
 import 'package:truthsoko/Pages/home/components/favorites.dart';
 import 'package:truthsoko/Utils/Auth/Auth.dart';
 import 'package:truthsoko/Utils/Auth/screen_changeProvider.dart';
-import 'package:truthsoko/src/controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:truthsoko/Pages/home/components/Drawer.dart';
 import '../Notification/Notification.dart';
-import '../Notification/components/header.dart';
+import 'components/header.dart';
 import 'components/sliding_cards.dart';
 import 'components/tabs.dart';
 
@@ -164,8 +163,8 @@ import 'components/tabs.dart';
   }
 }*/
 class HomeScreen extends StatefulWidget {
-  final User? user;
-  const HomeScreen({Key? key, this.user}) : super(key: key);
+  final User user;
+  const HomeScreen({Key? key, required this.user}) : super(key: key);
   static _HomeScreen? of(BuildContext context) =>
       context.findAncestorStateOfType<_HomeScreen>();
   @override
@@ -174,17 +173,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreen extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  final drawer = const DrawerWidget();
-
   static const double maxSlide = 225.0;
-  final controller = HomeController();
-  void _onVerticalGesture(DragUpdateDetails details) {
-    if (details.primaryDelta! < -0.7) {
-      controller.changeHomeState(HomeState.cart);
-    } else if (details.primaryDelta! > 12) {
-      controller.changeHomeState(HomeState.normal);
-    }
-  }
 
   static const double minDragStartEdge = 60;
   static const double maxDragStartEdge = maxSlide - 16;
@@ -196,7 +185,7 @@ class _HomeScreen extends State<HomeScreen>
     // TODO: implement initState
     super.initState();
     animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 250));
+        vsync: this, duration: const Duration(milliseconds: 350));
   }
 
   void close() => animationController.reverse();
@@ -283,13 +272,15 @@ class _HomeScreen extends State<HomeScreen>
                         case PageState.homescreen:
                           return const Home();
                         case PageState.categories:
-                          return const CategoryScreen();
+                          return  CategoryScreen(user: widget.user);
                         case PageState.notification:
-                          return const NotificationScreen();
+                          return  NotificationScreen(user:widget.user);
                         case PageState.about:
                           return const AboutScreen();
                         case PageState.account:
-                          return const ProfileScreen();
+                          return ProfileScreen(
+                            user:widget.user,
+                          );
                         default:
                       }
                       return Center(

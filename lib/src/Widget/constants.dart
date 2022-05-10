@@ -9,6 +9,7 @@ class Global {
   static const Color white = Color(0xffffffff);
   static const Color green = Color.fromARGB(255, 54, 157, 33);
   static const Color darkGreen = Color.fromARGB(255, 35, 73, 22);
+  static const Color grey = Color.fromARGB(255, 162, 161, 161);
   static const List validEmail = ['test@gmail.com'];
   //static const List<Color> _loadingIndicator = const [orange, green, yellow];
   static const panelTransition = Duration(milliseconds: 500);

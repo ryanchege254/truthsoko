@@ -1,5 +1,5 @@
 import 'package:truthsoko/src/Widget/fav_btn.dart';
-import 'package:truthsoko/src/Widget/price.dart';
+import 'package:truthsoko/Pages/Details/components/price.dart';
 import 'package:truthsoko/src/models/Product.dart';
 import 'package:flutter/material.dart';
 
@@ -9,15 +9,15 @@ class ProductCard extends StatelessWidget {
   const ProductCard({
     Key? key,
     required this.product,
-    required this.index,
+   // required this.index,
     required this.percentageComplete,
     required this.press,
   }) : super(key: key);
 
-  final Product product;
+  final ProductModel product;
   final double percentageComplete;
   final VoidCallback press;
-  final int index;
+//  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class ProductCard extends StatelessWidget {
           InkWell(
             onTap: press,
             child: Hero(
-              tag: index,
+              tag: product.title!,
               child: Image.asset(product.image!),
             ),
           ),
@@ -54,7 +54,7 @@ class ProductCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Price(amount: "20.00"),
-              Hero(tag:index, child: const FavBtn()),
+              Hero(tag:product, child: const FavBtn()),
             ],
           )
         ],

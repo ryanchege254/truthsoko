@@ -17,8 +17,8 @@ class ProductIcon extends StatelessWidget {
       : super(key: key);
 
   @override
+  // ignore: duplicate_ignore
   Widget build(BuildContext context) {
-    // ignore: unnecessary_null_comparison
     return model.id == null
         ? Container(width: 5)
         : Container(
