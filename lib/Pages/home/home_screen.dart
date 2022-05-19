@@ -9,7 +9,7 @@ import 'package:truthsoko/Pages/home/components/Product_bottom_sheet.dart';
 import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
 import 'package:truthsoko/Pages/home/components/favorites.dart';
 import 'package:truthsoko/Utils/Auth/Auth.dart';
-import 'package:truthsoko/Utils/Auth/screen_changeProvider.dart';
+import 'package:truthsoko/Pages/screen_changeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:truthsoko/Pages/home/components/Drawer.dart';
 import '../Notification/Notification.dart';
@@ -171,21 +171,30 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreen();
 }
 
-class _HomeScreen extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
   static const double maxSlide = 225.0;
 
   static const double minDragStartEdge = 60;
   static const double maxDragStartEdge = maxSlide - 16;
   late AnimationController animationController;
+  late AnimationController tabController;
+  late Animation animation;
+
   bool _canBeDragged = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 350));
+    
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    tabController.dispose();
+    super.dispose();
   }
 
   void close() => animationController.reverse();
@@ -232,6 +241,13 @@ class _HomeScreen extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     //final height = MediaQuery.of(context).size.height;
+    tabController =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1));
+
+    animation = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+      parent: tabController,
+      curve: Curves.easeInOut,
+    ));
 
     return MultiProvider(
       providers: [
@@ -257,7 +273,6 @@ class _HomeScreen extends State<HomeScreen>
               double animValue = animationController.value;
               final slideAmount = maxSlide * animValue;
               final contentScale = 1.0 - (0.3 * animValue);
-
               return Stack(
                 children: [
                   const DrawerWidget(),
@@ -270,16 +285,17 @@ class _HomeScreen extends State<HomeScreen>
                         builder: (context, ScreenChange change, child) {
                       switch (change.state) {
                         case PageState.homescreen:
-                          return const Home();
+                          return Home(
+                              controller: tabController, animation: animation);
                         case PageState.categories:
-                          return  CategoryScreen(user: widget.user);
+                          return CategoryScreen(user: widget.user);
                         case PageState.notification:
-                          return  NotificationScreen(user:widget.user);
+                          return NotificationScreen(user: widget.user);
                         case PageState.about:
                           return const AboutScreen();
                         case PageState.account:
                           return ProfileScreen(
-                            user:widget.user,
+                            user: widget.user,
                           );
                         default:
                       }
@@ -301,10 +317,15 @@ class _HomeScreen extends State<HomeScreen>
 }
 
 class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
+  final AnimationController controller;
+  final Animation animation;
+  const Home({Key? key, required this.controller, required this.animation})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+
     // ignore: todo
     // TODO: implement build
     return ChangeNotifierProvider.value(
@@ -314,28 +335,41 @@ class Home extends StatelessWidget {
             children: [
               Column(
                 children: [
-                  GestureDetector(
-                      onTap: () => _HomeScreen().toggle(),
-                      child: const HomeHeader()),
+                  Expanded(
+                    child: GestureDetector(
+                        onTap: () => _HomeScreen().toggle(),
+                        child: const HomeHeader()),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
-                  const SearchWidget(searchController: null),
+                  const Expanded(child: SearchWidget(searchController: null)),
                   const SizedBox(height: 8),
-                  const Tabs(),
+                  Tabs(
+                    controller: controller,
+                  ),
                   const SizedBox(height: 8),
                   //const Favorites(),
-                  Consumer<TabSelected>(
-                      builder: (context, TabSelected tabselected, child) {
-                    switch (tabselected.selected) {
-                      case TabWidget.Favorites:
-                        return const Favorites();
-                      case TabWidget.Recent:
-                        return const SlidingCardsView();
-                      case TabWidget.New:
-                        return const SlidingCardsView();
-                    }
-                  }),
+                  AnimatedBuilder(
+                    builder: (context, child) {
+                      return Transform(
+                        transform: Matrix4.translationValues(
+                            animation.value * width, 0.0, 0.0),
+                        child: Consumer<TabSelected>(
+                            builder: (context, TabSelected tabselected, child) {
+                          switch (tabselected.selected) {
+                            case TabWidget.Favorites:
+                              return const Favorites();
+                            case TabWidget.Recent:
+                              return const SlidingCardsView();
+                            case TabWidget.New:
+                              return const SlidingCardsView();
+                          }
+                        }),
+                      );
+                    },
+                    animation: controller,
+                  ),
                 ],
               ),
               const ProductBottomSheet()
