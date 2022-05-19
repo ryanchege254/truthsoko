@@ -15,7 +15,6 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return ChangeNotifierProvider.value(
         value: UserRepository.instance(),
         child: Scaffold(
@@ -23,7 +22,7 @@ class ProfileScreen extends StatelessWidget {
             child: Stack(
               children: [
                 Container(
-                  color: Color.fromARGB(255, 228, 228, 228),
+                  color: const Color.fromARGB(255, 228, 228, 228),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -101,8 +100,8 @@ class ProfileScreen extends StatelessWidget {
                                                   secondaryAnimation) =>
                                               FadeTransition(
                                                   opacity: animation,
-                                                  child: EditProfile(
-                                                      user: user)),
+                                                  child:
+                                                      EditProfile(user: user)),
                                         ),
                                       );
                                     },
@@ -260,6 +259,7 @@ class ProfileWidget extends StatelessWidget {
         InkWell(
           onTap: onClick,
           child: Container(
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(50)),
             child: Icon(
               icon,
               size: 35,

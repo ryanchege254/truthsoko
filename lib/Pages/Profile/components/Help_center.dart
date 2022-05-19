@@ -13,14 +13,18 @@ class HelpCenter extends StatefulWidget {
 
 class _HelpCenterState extends State<HelpCenter>
     with SingleTickerProviderStateMixin {
+  late AnimationController animController;
+  late Animation animate;
+
   @override
   void initState() {
     super.initState();
     animController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
+    animate = Tween(begin: -1.0, end: 0.0).animate(
+        CurvedAnimation(parent: animController, curve: Curves.easeInOut));
   }
 
-  late AnimationController animController;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,9 +69,10 @@ class _HelpCenterState extends State<HelpCenter>
     );
   }
 
-  void tap() => animController.isDismissed
-      ? animController.reverse()
-      : animController.forward();
+  void tap() {
+    animController.reset();
+    animController.forward();
+  }
 
   Widget _extendedQuestion(ValueChanged<QnAModel> onSelected, QnAModel model) {
     return AnimatedBuilder(
@@ -84,7 +89,8 @@ class _HelpCenterState extends State<HelpCenter>
                       tap();
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 10),
                       decoration: const BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           gradient: LinearGradient(
@@ -103,29 +109,44 @@ class _HelpCenterState extends State<HelpCenter>
                               style: GoogleFonts.acme(fontSize: 20),
                             ),
                           ),
-                          const Expanded(child: Icon(Icons.arrow_downward))
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          const Icon(
+                            Icons.arrow_downward,
+                            size: 15,
+                          )
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(
-                    height: 30,
+                    height: 20,
                   ),
-                  Transform.translate(
-                    offset: Offset(animController.value, 15.0),
-                    child: model.selected
-                        ? AnimatedContainer(
-                            duration: const Duration(seconds: 1),
-                            curve: Curves.easeInOut,
-                            child: ListTile(
+                  Container(
+                    decoration: const BoxDecoration(
+                        border: Border(
+                            left: BorderSide(color: Global.grey),
+                            right: BorderSide(color: Global.grey),
+                            bottom: BorderSide(color: Global.grey))),
+                    child: Transform.translate(
+                      offset: Offset(
+                        0.0,
+                        animController.value * 20,
+                      ),
+                      child: model.selected
+                          ? ListTile(
                               title: Text(
                                 model.answer,
                                 style: GoogleFonts.acme(fontSize: 15),
                               ),
-                            ),
-                          )
-                        : Container(),
-                  )
+                            )
+                          : Container(),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                 ],
               ),
             ],
@@ -173,16 +194,24 @@ class QnAModel {
         "1st question goes herexjcnsdjcnsodjjcnsodjcnsokdjcnsoodjcnoisdjcnosdodjcnsodjnc odfoocnsdocn",
         "answer goes here ....below the answer above ",
         true),
-    QnAModel("2nd question goes here....",
-        "answer goes here ....below the answer above", false),
+    QnAModel(
+        "1st question goes herexjcnsdjcnsodjjcnsodjcnsokdjcnsoodjcnoisdjcnosdodjcnsodjnc odfoocnsdocn",
+        "answer goes here ....below the answer above",
+        false),
+    QnAModel(
+        "3rd question goes here....",
+        "1st question goes herexjcnsdjcnsodjjcnsodjcnsokdjcnsoodjcnoisdjcnosdodjcnsodjnc odfoocnsdocn",
+        false),
+    QnAModel(
+        "What is truth soko....",
+        "1st question goes herexjcnsdjcnsodjjcnsodjcnsokdjcnsoodjcnoisdjcnosdodjcnsodjnc odfoocnsdocn",
+        false),
     QnAModel("3rd question goes here....",
         "answer goes here ....below the answer above", false),
-    QnAModel("What is truth soko....",
-        "answer goes here ....below the answer above", false),
-    QnAModel("3rd question goes here....",
-        "answer goes here ....below the answer above", false),
-    QnAModel("3rd question goes here....",
-        "answer goes here ....below the answer above", false),
+    QnAModel(
+        "1st question goes herexjcnsdjcnsodjjcnsodjcnsokdjcnsoodjcnoisdjcnosdodjcnsodjnc odfoocnsdocn",
+        "answer goes here ....below the answer above",
+        false),
     QnAModel("3rd question goes here....",
         "answer goes here ....below the answer above", false),
     QnAModel("3rd question goes here....",

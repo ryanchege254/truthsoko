@@ -7,7 +7,7 @@ import 'package:truthsoko/Pages/Profile/components/editStateprovider.dart';
 import 'package:truthsoko/src/Widget/textfield_widget.dart';
 import 'package:truthsoko/src/models/textview_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../Utils/Auth/Database/handleUsers.dart';
+import '../../../Utils/Database/handleUsers.dart';
 import '../../../src/Widget/constants.dart';
 import '../../../src/models/User.dart';
 
@@ -19,8 +19,11 @@ class EditProfile extends StatefulWidget {
   State<StatefulWidget> createState() => _EditProfileState();
 }
 
-class _EditProfileState extends State<EditProfile> {
-  final _userhandler = UserHandler();
+class _EditProfileState extends State<EditProfile>
+    with TickerProviderStateMixin {
+  // final _userhandler = UserHandler();
+  late AnimationController controller;
+  late Animation animate;
   @override
   Widget build(BuildContext context) {
     final _oldPassController = TextEditingController();
@@ -29,6 +32,24 @@ class _EditProfileState extends State<EditProfile> {
     final email = TextEditingController();
     final username = TextEditingController();
 
+    @override
+    void initState() {
+      controller = AnimationController(
+          vsync: this, duration: const Duration(milliseconds: 500));
+
+      super.initState();
+    }
+
+    @override
+    void dispose() {
+      controller.dispose();
+      super.dispose();
+    }
+
+    controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
+    animate = Tween(begin: -1.0, end: 0.0)
+        .animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
     Widget _listTile(ValueChanged<ProfileEdit> onSelected, ProfileEdit model) {
       return Consumer<ProfileEditState>(builder: (context, edit, child) {
         return Column(
@@ -38,6 +59,8 @@ class _EditProfileState extends State<EditProfile> {
                 edit.selected == ActionsWidget.Normal;
               },
               onTap: () {
+                controller.reset();
+                controller.forward();
                 edit.onSelected(onSelected, model);
               },
               child: Container(
@@ -156,8 +179,8 @@ class _EditProfileState extends State<EditProfile> {
             ),
             TextButton(
               onPressed: () {
-                _userhandler.updateUser(
-                    UserModel(phone: phone.text), widget.user.uid);
+                //_userhandler.updateUser(
+                //  UserModel(phone: phone.text), widget.user.uid);
               },
               child: const Text("Submit"),
             )
@@ -210,8 +233,8 @@ class _EditProfileState extends State<EditProfile> {
             ),
             TextButton(
               onPressed: () {
-                _userhandler.updateUser(
-                    UserModel(email: email.text), widget.user.uid);
+                //  _userhandler.updateUser(
+                // UserModel(email: email.text), widget.user.uid);
               },
               child: const Text("Submit"),
             )
@@ -254,22 +277,31 @@ class _EditProfileState extends State<EditProfile> {
                                   ))
                               .toList(),
                         ),
-                        Consumer<ProfileEditState>(
-                            builder: (context, edit, child) {
-                          switch (edit.selected) {
-                            case ActionsWidget.Normal:
-                              return Container();
-                            case ActionsWidget.EditPhone:
-                              return _editPhoneList();
-                            case ActionsWidget.EditPassword:
-                              return _editPasswordList();
-                            case ActionsWidget.EditEmail:
-                              return _editEmailList();
-                            case ActionsWidget.EditCountry:
-                              break;
-                          }
-                          return Container();
-                        })
+                        AnimatedBuilder(
+                          animation: controller,
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(controller.value * 20, 1),
+                              child: child,
+                            );
+                          },
+                          child: Consumer<ProfileEditState>(
+                              builder: (context, edit, child) {
+                            switch (edit.selected) {
+                              case ActionsWidget.Normal:
+                                return Container();
+                              case ActionsWidget.EditPhone:
+                                return _editPhoneList();
+                              case ActionsWidget.EditPassword:
+                                return _editPasswordList();
+                              case ActionsWidget.EditEmail:
+                                return _editEmailList();
+                              case ActionsWidget.EditCountry:
+                                break;
+                            }
+                            return Container();
+                          }),
+                        )
                       ],
                     );
                   })),
