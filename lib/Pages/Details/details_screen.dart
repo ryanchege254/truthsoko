@@ -99,61 +99,84 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 10),
-                                  decoration: const BoxDecoration(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(10)),
-                                      gradient: LinearGradient(
-                                          end: Alignment.bottomRight,
-                                          begin: Alignment.topLeft,
-                                          colors: [
-                                            Global.green,
-                                            Global.orange,
-                                            Global.yellow,
-                                            Global.white,
-                                          ])),
-                                  child: Column(children: [
-                                    Expanded(
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  spreadRadius: 1,
-                                                  blurRadius: 12,
-                                                  color: Global.white)
-                                            ]),
-                                        child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.horizontal(
-                                                    left: Radius.circular(16),
-                                                    right: Radius.circular(16)),
-                                            child: Image.asset(product.image!)),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            product.location!,
-                                            style: GoogleFonts.acme(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w300),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            const Duration(milliseconds: 700),
+                                        reverseTransitionDuration:
+                                            const Duration(milliseconds: 700),
+                                        pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                            FadeTransition(
+                                          opacity: animation,
+                                          child: DetailsScreen(
+                                            product: demo_productsModel[index],
                                           ),
-                                          const SizedBox(width: 5),
-                                          const Price(amount: "20.00")
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ]),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 10),
+                                    decoration: const BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        gradient: LinearGradient(
+                                            end: Alignment.bottomRight,
+                                            begin: Alignment.topLeft,
+                                            colors: [
+                                              Global.green,
+                                              Global.orange,
+                                              Global.yellow,
+                                              Global.white,
+                                            ])),
+                                    child: Column(children: [
+                                      Expanded(
+                                        child: Container(
+                                          decoration: const BoxDecoration(
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    spreadRadius: 1,
+                                                    blurRadius: 12,
+                                                    color: Global.white)
+                                              ]),
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.horizontal(
+                                                      left: Radius.circular(16),
+                                                      right:
+                                                          Radius.circular(16)),
+                                              child:
+                                                  Image.asset(product.image!)),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              product.location!,
+                                              style: GoogleFonts.acme(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w300),
+                                            ),
+                                            const SizedBox(width: 5),
+                                            const Price(amount: "20.00")
+                                          ],
+                                        ),
+                                      ),
+                                    ]),
+                                  ),
                                 ),
                               )
                             ]);
