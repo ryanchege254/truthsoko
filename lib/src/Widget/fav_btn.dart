@@ -1,13 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:truthsoko/Utils/Database/productHandler.dart';
+import 'package:truthsoko/src/models/Product.dart';
 
 import 'constants.dart';
 
 class FavBtn extends StatelessWidget {
+  final User user;
+  final ProductModel product;
   const FavBtn({
     Key? key,
     this.radius = 15,
+    required this.product,
+    required this.user,
   }) : super(key: key);
 
   final double radius;
@@ -20,6 +27,7 @@ class FavBtn extends StatelessWidget {
           return InkWell(
             onTap: () {
               provider.onLiked = !provider.onLiked;
+              ProductHandler().addProduct(product, user);
             },
             child: SizedBox(
               height: 20,
