@@ -1,15 +1,21 @@
 // ignore: file_names
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:truthsoko/Pages/home/components/product_card.dart';
+import 'package:truthsoko/Utils/Database/productHandler.dart';
 
 import '../../../src/Widget/constants.dart';
 import '../../../src/models/Product.dart';
 import '../../Details/details_screen.dart';
 
 class ProductBottomSheet extends StatefulWidget {
-  const ProductBottomSheet({Key? key}) : super(key: key);
+  final User user;
+  const ProductBottomSheet({Key? key, required this.user}) : super(key: key);
 
   @override
   _ProductBottomSheet createState() => _ProductBottomSheet();
@@ -17,7 +23,6 @@ class ProductBottomSheet extends StatefulWidget {
 
 class _ProductBottomSheet extends State<ProductBottomSheet> {
   double initialPercentage = 0.15;
- 
 
   @override
   Widget build(BuildContext context) {
@@ -42,83 +47,103 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                   color: Global.darkGreen,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
                 ),
-                child: Stack(
-                  children: <Widget>[
-                    Opacity(
-                      opacity: percentage == 1 ? 1 : 0,
-                      child: GridView.builder(
-                        scrollDirection: Axis.vertical,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.75,
-                          mainAxisSpacing: Global.defaultPadding,
-                          crossAxisSpacing: Global.defaultPadding,
-                        ),
-                        padding: const EdgeInsets.only(right: 32, top: 128),
-                        controller: scrollController,
-                        itemCount: demo_productsModel.length,
-                        itemBuilder: (context, index) {
-                          final product = demo_productsModel[index];
-                          return ProductCard(
-                              //index:index,
-                              product: product,
-                              percentageComplete: percentage,
-                              press: () {
-                                Navigator.push(
-                                  context,
-                                  PageRouteBuilder(
-                                    transitionDuration:
-                                        const Duration(milliseconds: 500),
-                                    reverseTransitionDuration:
-                                        const Duration(milliseconds: 500),
-                                    pageBuilder: (context, animation,
-                                            secondaryAnimation) =>
-                                        FadeTransition(
-                                      opacity: animation,
-                                      child: DetailsScreen(
-                                        product:product,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              });
-                        },
-                      ),
-                    ),
-                    ...demo_productsModel.map((product) {
-                      int index = demo_productsModel.indexOf(product);
-                      int heightPerElement = 120 + 8 + 8;
-                      double widthPerElement =
-                          40 + percentage * 80 + 8 * (1 - percentage);
-                      double leftOffset = widthPerElement *
-                          (index > 4 ? index + 2 : index) *
-                          (1 - scaledPercentage);
-                      return Positioned(
-                        top: 44.0 +
-                            scaledPercentage * (128 - 44) +
-                            index * heightPerElement * scaledPercentage,
-                        left: leftOffset,
-                        right: 32 - leftOffset,
-                        child: IgnorePointer(
-                          ignoring: true,
-                          child: Opacity(
-                            opacity: percentage == 1 ? 0 : 1,
-                            child: MyProductItem(
-                                product: product,
-                                percentageCompleted: percentage),
+                child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("Products")
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      final data = snapshot.data;
+                      if (snapshot.hasError) {
+                        return Center(
+                            child: Padding(
+                          padding: const EdgeInsets.all(100),
+                          child: Text(
+                              "Something went wrong.....${snapshot.error}"),
+                        ));
+                      }
+
+                      return Stack(
+                        children: <Widget>[
+                          Opacity(
+                              opacity: percentage == 1 ? 1 : 0,
+                              child: GridView.builder(
+                                scrollDirection: Axis.vertical,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.75,
+                                  mainAxisSpacing: Global.defaultPadding,
+                                  crossAxisSpacing: Global.defaultPadding,
+                                ),
+                                padding:
+                                    const EdgeInsets.only(right: 32, top: 128),
+                                controller: scrollController,
+                                itemCount: snapshot.data?.docs.length ?? 0,
+                                itemBuilder: (context, index) {
+                                  final product = ProductModel.fromSnapshot(
+                                      snapshot.data!.docs[index]);
+                                  return ProductCard(
+                                      //index:index,
+                                      product: product,
+                                      percentageComplete: percentage,
+                                      press: () {
+                                        Navigator.push(
+                                          context,
+                                          PageRouteBuilder(
+                                            transitionDuration: const Duration(
+                                                milliseconds: 500),
+                                            reverseTransitionDuration:
+                                                const Duration(
+                                                    milliseconds: 500),
+                                            pageBuilder: (context, animation,
+                                                    secondaryAnimation) =>
+                                                FadeTransition(
+                                              opacity: animation,
+                                              child: DetailsScreen(
+                                                product: product,
+                                                user: widget.user,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                },
+                              )),
+                          ...demo_productsModel.map((product) {
+                            int index = demo_productsModel.indexOf(product);
+                            int heightPerElement = 120 + 8 + 8;
+                            double widthPerElement =
+                                40 + percentage * 80 + 8 * (1 - percentage);
+                            double leftOffset = widthPerElement *
+                                (index > 4 ? index + 2 : index) *
+                                (1 - scaledPercentage);
+                            return Positioned(
+                              top: 44.0 +
+                                  scaledPercentage * (128 - 44) +
+                                  index * heightPerElement * scaledPercentage,
+                              left: leftOffset,
+                              right: 32 - leftOffset,
+                              child: IgnorePointer(
+                                ignoring: true,
+                                child: Opacity(
+                                  opacity: percentage == 1 ? 0 : 1,
+                                  child: MyProductItem(
+                                      product: product,
+                                      percentageCompleted: percentage),
+                                ),
+                              ),
+                            );
+                          }),
+                          SheetHeader(
+                            fontSize: 14 + percentage * 8,
+                            topMargin: 16 +
+                                percentage * MediaQuery.of(context).padding.top,
                           ),
-                        ),
+                          const MenuButton(),
+                        ],
                       );
                     }),
-                    SheetHeader(
-                      fontSize: 14 + percentage * 8,
-                      topMargin:
-                          16 + percentage * MediaQuery.of(context).padding.top,
-                    ),
-                    const MenuButton(),
-                  ],
-                ),
               );
             },
           );
