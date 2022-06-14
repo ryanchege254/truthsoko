@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:truthsoko/Pages/Profile/components/Widget/productList.dart';
+import 'package:truthsoko/Utils/Database/productHandler.dart';
 import 'package:truthsoko/src/models/Product.dart';
 
 import '../../../src/Widget/constants.dart';
+import '../../../src/Widget/fav_btn.dart';
 
 class RecentlyViewed extends StatefulWidget {
-  const RecentlyViewed({Key? key}) : super(key: key);
+  final User user;
+  const RecentlyViewed({Key? key, required this.user}) : super(key: key);
 
   @override
   State<RecentlyViewed> createState() => RecentlyViewedState();
@@ -18,21 +24,18 @@ class RecentlyViewedState extends State<RecentlyViewed> {
         title: const Text("Recently viewed"),
         backgroundColor: Global.green,
       ),
-      body: Container(
-          padding: const EdgeInsets.all(Global.defaultPadding),
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  itemCount: demo_productsModel.length,
-                  itemBuilder: (context, index) {
-                    final product = demo_productsModel[index];
-                    return productCard(product);
-                  },
-                ),
-              )
-            ],
-          )),
+      body: StreamBuilder(
+          stream: ProductHandler().fetchRecentItems(widget.user.uid),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            final data = snapshot.data!.docs;
+            return Container(
+                padding: const EdgeInsets.all(Global.defaultPadding),
+                child: Column(
+                  children: [
+                    Expanded(child: productlist(widget.user, snapshot))
+                  ],
+                ));
+          }),
     );
   }
 
@@ -40,9 +43,9 @@ class RecentlyViewedState extends State<RecentlyViewed> {
     return Column(
       children: [
         Container(
-          //padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15), color: Global.darkGreen),
+          padding: const EdgeInsets.all(10),
+          decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: Global.grey))),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -64,7 +67,6 @@ class RecentlyViewedState extends State<RecentlyViewed> {
                             style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 15,
-                              color: Global.white,
                             )),
                         const SizedBox(width: 8),
                         Text(
@@ -96,8 +98,12 @@ class RecentlyViewedState extends State<RecentlyViewed> {
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 17,
-                        color: Global.white,
-                      )))
+                        color: Global.darkGreen,
+                      ))),
+              FavBtn(
+                product: product,
+                user: widget.user,
+              )
             ],
           ),
         ),
