@@ -10,6 +10,10 @@
 
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
+
 ProductModel productModelFromJson(String str) =>
     ProductModel.fromJson(json.decode(str));
 
@@ -17,6 +21,7 @@ String productModelToJson(ProductModel data) => json.encode(data.toJson());
 
 class ProductModel {
   ProductModel({
+    this.documentId,
     this.title,
     this.category,
     this.image,
@@ -25,14 +30,24 @@ class ProductModel {
     this.quantity,
     this.isliked,
   });
-
+  String? documentId;
   String? title;
   String? category;
   String? image;
   String? location;
-  double? price;
+  String? price;
   String? quantity;
-  String? isliked;
+  bool? isliked;
+  Future<Widget> getImage(BuildContext context, String imageName) async {
+    Image? image;
+    await FirebaseImageStorage.loadimage(context, imageName).then((value) {
+      image = Image.network(
+        value.toString(),
+        fit: BoxFit.scaleDown,
+      );
+    });
+    return image!;
+  }
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
         title: json["title"],
@@ -53,71 +68,41 @@ class ProductModel {
         "quantity": quantity,
         "isliked": isliked,
       };
+  ProductModel.fromSnapshot(DocumentSnapshot<dynamic> snapshot)
+      : documentId = snapshot.id,
+        title = snapshot.data()!['title'],
+        category = snapshot.data()!['category'],
+        image = snapshot.data()['image'],
+        location = snapshot.data()['location'],
+        price = snapshot.data()['price'],
+        quantity = snapshot.data()['quantity'],
+        isliked = snapshot.data()['isliked'];
 }
 
-/*List<Product> demo_products = [
-  Product(title: "Cabbage", image: "assets/images/img_1.png"),
-  Product(title: "Broccoli", image: "assets/images/img_2.png"),
-  Product(title: "Carrot", image: "assets/images/img_3.png"),
-  Product(title: "Pakcoy", image: "assets/images/img_4.png"),
-  Product(title: "Cucumber", image: "assets/images/img_1.png"),
-  Product(title: "Cucumber", image: "assets/images/img_1.png"),
-  Product(title: "Cucumber", image: "assets/images/img_1.png"),
-  Product(title: "Cucumber", image: "assets/images/img_1.png"),
-];*/
 List<ProductModel> demo_productsModel = [
   ProductModel(
-      title: "Cabbage",
-      image: "assets/images/img_1.png",
-      price: 20.0,
-      category: "Vegatable",
-      location: "Nairobi"),
-  ProductModel(
-      title: "Broccoli",
-      image: "assets/images/img_2.png",
-      price: 20.0,
-      location: "Nairobi",
-      category: "Fruits"),
-  ProductModel(
-    title: "Carrot",
-    image: "assets/images/img_3.png",
-    price: 20.0,
-    category: "Vegatable",
-    location: "Nairobi",
+    image: 'assets/images/img_1.png',
   ),
   ProductModel(
-    title: "Pakcoy",
-    image: "assets/images/img_4.png",
-    price: 20.0,
-    category: "Fruits",
-    location: "Nairobi",
+    image: 'assets/images/img_2.png',
   ),
   ProductModel(
-    title: "Cucumber",
-    image: "assets/images/img_1.png",
-    price: 20.0,
-    category: "Vegatable",
-    location: "Nairobi",
+    image: 'assets/images/img_3.png',
   ),
   ProductModel(
-    title: "Cucumber2",
-    image: "assets/images/img_1.png",
-    price: 20.0,
-    category: "Fruits",
-    location: "Nairobi",
+    image: 'assets/images/img_4.png',
   ),
   ProductModel(
-    title: "Cucumber3",
-    image: "assets/images/img_1.png",
-    price: 20.0,
-    category: "Vegatable",
-    location: "Nairobi",
-  ),
-  ProductModel(
-    title: "Cucumber4",
-    image: "assets/images/img_1.png",
-    price: 20.0,
-    category: "Fruits",
-    location: "Nairobi",
+    image: 'assets/images/img_5.png',
   ),
 ];
+
+class FirebaseImageStorage extends ChangeNotifier {
+  FirebaseImageStorage();
+  static Future<dynamic> loadimage(BuildContext context, String image) async {
+    return await FirebaseStorage.instance
+        .ref("Product")
+        .child(image)
+        .getDownloadURL();
+  }
+}

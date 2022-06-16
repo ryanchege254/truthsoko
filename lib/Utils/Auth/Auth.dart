@@ -32,7 +32,7 @@ class UserRepository with ChangeNotifier {
       _status = Status.Authenticating;
       notifyListeners();
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-
+       
       return true;
     } on FirebaseAuthException catch (e) {
       _status = Status.Unauthenticated;
@@ -46,7 +46,6 @@ class UserRepository with ChangeNotifier {
           break;
         default:
       }
-      show(_context, e.code);
 
       notifyListeners();
       return false;
@@ -79,7 +78,6 @@ class UserRepository with ChangeNotifier {
           break;
         default:
       }
-      show(_context, e.code);
 
       _status = Status.Unauthenticated;
       notifyListeners();

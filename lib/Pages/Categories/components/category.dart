@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:truthsoko/Pages/Categories/components/select_provider.dart';
 import 'package:truthsoko/src/models/category.dart';
 import 'package:truthsoko/src/themes/theme.dart';
 import 'product_icon.dart';
@@ -23,7 +22,10 @@ class Categories extends StatelessWidget {
                 .map(
                   (category) => ProductIcon(
                     model: category,
-                    onSelected: (model) {},
+                    onSelected: (category) {
+                      _selected.itemSelected(category);
+                      print(category.name);
+                    },
                   ),
                 )
                 .toList(),

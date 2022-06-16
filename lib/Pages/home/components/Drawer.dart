@@ -3,18 +3,19 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/home/home_screen.dart';
-import 'package:truthsoko/Utils/Auth/screen_changeProvider.dart';
+import 'package:truthsoko/Pages/screen_changeProvider.dart';
 import '../../../src/Widget/constants.dart';
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({Key? key}) : super(key: key);
+  const DrawerWidget({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     double blurRadius = 15;
     double spreadRadius = 3;
 
-    // TODO: implement build
     return Consumer<ScreenChange>(builder: (context, screenChange, child) {
       return Material(
         child: SafeArea(
@@ -141,13 +142,13 @@ class DrawerWidget extends StatelessWidget {
                               offset: const Offset(5, 5),
                             )
                           ]),
-                          child: const Icon(
-                            Icons.account_box,
+                          child: const FaIcon(
+                            Icons.verified_user_rounded,
                             color: Global.yellow,
                           ),
                         ),
                         title: Text(
-                          "My Account",
+                          "Profile",
                           style: GoogleFonts.acme(),
                         ),
                       ),
@@ -221,6 +222,7 @@ class DrawerWidget extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
+                        
                         screenChange.changeHomeState(PageState.shareApp);
                         print("${screenChange.state}");
                       },

@@ -18,6 +18,11 @@ Widget productlist(final user, AsyncSnapshot<QuerySnapshot> snapshot) {
     padding: const EdgeInsets.only(right: 32, top: 128),
     itemCount: snapshot.data?.docs.length ?? 0,
     itemBuilder: (context, index) {
+      if (snapshot.data!.docs.isEmpty) {
+        return const Center(
+          child: Text("No products are saved yet"),
+        );
+      }
       final ProductModel product =
           ProductModel.fromSnapshot(snapshot.data!.docs[index]);
       return ProductCard(

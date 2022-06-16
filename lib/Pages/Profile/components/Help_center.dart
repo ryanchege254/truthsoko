@@ -132,7 +132,7 @@ class _HelpCenterState extends State<HelpCenter>
                     child: Transform.translate(
                       offset: Offset(
                         0.0,
-                        animController.value * 20,
+                        animController.value * 10,
                       ),
                       child: model.selected
                           ? ListTile(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Utils/Auth/Auth.dart';
-import 'package:truthsoko/Utils/Auth/Database/handleUsers.dart';
 import 'package:truthsoko/src/Widget/bezierContainer.dart';
 import 'package:truthsoko/src/Widget/textfield_widget.dart';
 import 'package:truthsoko/Pages/Auth/loginPage.dart';
@@ -12,6 +12,8 @@ import 'package:page_transition/page_transition.dart';
 import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/src/models/User.dart';
 import 'package:truthsoko/src/models/textview_model.dart';
+
+import '../../Utils/Database/handleUsers.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key, this.title}) : super(key: key);
@@ -156,173 +158,183 @@ class _SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       key: _key,
       body: SingleChildScrollView(
-        child: SizedBox(
-          height: height,
-          child: Stack(children: <Widget>[
-            Positioned(
-              top: -MediaQuery.of(context).size.height * .15,
-              right: -MediaQuery.of(context).size.width * .4,
-              child: const BezierContainer(),
-            ),
-            _loginAccountLabel(),
-            Form(
-              key: _formKey,
-              child: Consumer<UserRepository>(
-                  builder: (context, UserRepository user, child) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(height: height * .2),
-                        _title(),
-                        const SizedBox(
-                          height: 50,
-                        ),
-                        Consumer<TextviewModel>(
-                            builder: (context, TextviewModel model, child) {
-                          return Column(
-                            children: <Widget>[
-                              TextFieldWidget(
-                                controller: _email,
-                                hintText: "Email",
-                                prefixIconData: Icons.email,
-                                suffixIconData: null,
-                                obscureText: false,
-                                onChanged: (value) {},
-                              ),
-                              const SizedBox(
-                                height: 10.0,
-                              ),
-                              TextFieldWidget(
-                                controller: _passwordController,
-                                hintText: "Password",
-                                prefixIconData: Icons.lock_outline,
-                                suffixIconData: model.isVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                obscureText: model.isVisible,
-                                onChanged: (value) {},
-                              ),
-                              const SizedBox(
-                                height: 10.0,
-                              ),
-                              TextFieldWidget(
-                                controller: _confirmpasswordController,
-                                hintText: "Confirm Password",
-                                prefixIconData: Icons.lock_outline_sharp,
-                                suffixIconData: null,
-                                obscureText: true,
-                                onChanged: (value) {},
-                              )
-                            ],
-                          );
-                        }),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        // _submitButton(context),
-                        user.status == Status.Authenticating
-                            ? const Padding(
-                                padding: EdgeInsets.all(64),
-                                child: LoadingIndicator(
-                                  strokeWidth: 5,
-                                  indicatorType: Indicator.ballGridPulse,
-                                  colors: [
-                                    Global.orange,
-                                    Global.green,
-                                    Global.yellow
-                                  ],
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (context) => TextviewModel()),
+            ChangeNotifierProvider.value(value: UserRepository.instance()),
+          ],
+          child: SizedBox(
+            height: height,
+            child: Stack(children: <Widget>[
+              Positioned(
+                top: -MediaQuery.of(context).size.height * .15,
+                right: -MediaQuery.of(context).size.width * .4,
+                child: const BezierContainer(),
+              ),
+              _loginAccountLabel(),
+              Form(
+                key: _formKey,
+                child: Consumer<UserRepository>(
+                    builder: (context, UserRepository user, child) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(height: height * .2),
+                          _title(),
+                          const SizedBox(
+                            height: 50,
+                          ),
+                          Consumer<TextviewModel>(
+                              builder: (context, TextviewModel model, child) {
+                            return Column(
+                              children: <Widget>[
+                                TextFieldWidget(
+                                  controller: _email,
+                                  hintText: "Email",
+                                  prefixIconData: Icons.email,
+                                  suffixIconData: null,
+                                  obscureText: false,
+                                  onChanged: (value) {},
                                 ),
-                              )
-                            : GestureDetector(
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 15),
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(5)),
-                                      boxShadow: <BoxShadow>[
-                                        BoxShadow(
-                                            color: Colors.grey.shade200,
-                                            offset: const Offset(2, 4),
-                                            blurRadius: 5,
-                                            spreadRadius: 2)
-                                      ],
-                                      gradient: const LinearGradient(
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                          colors: [
-                                            Color(0xfffbb448),
-                                            Color(0xfff7892b)
-                                          ])),
-                                  child: const Text(
-                                    'Register Now',
-                                    style: TextStyle(
-                                        fontSize: 20, color: Colors.white),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                TextFieldWidget(
+                                  controller: _passwordController,
+                                  hintText: "Password",
+                                  prefixIconData: Icons.lock_outline,
+                                  suffixIconData: model.isVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  obscureText: model.isVisible,
+                                  onChanged: (value) {},
+                                ),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                TextFieldWidget(
+                                  controller: _confirmpasswordController,
+                                  hintText: "Confirm Password",
+                                  prefixIconData: Icons.lock_outline_sharp,
+                                  suffixIconData: null,
+                                  obscureText: true,
+                                  onChanged: (value) {},
+                                )
+                              ],
+                            );
+                          }),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          // _submitButton(context),
+                          user.status == Status.Authenticating
+                              ? const Padding(
+                                  padding: EdgeInsets.all(64),
+                                  child: LoadingIndicator(
+                                    strokeWidth: 5,
+                                    indicatorType: Indicator.ballGridPulse,
+                                    colors: [
+                                      Global.orange,
+                                      Global.green,
+                                      Global.yellow
+                                    ],
                                   ),
-                                ),
-                                onTap: () async {
-                                  _formKey.currentState!.validate();
+                                )
+                              : GestureDetector(
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(5)),
+                                        boxShadow: <BoxShadow>[
+                                          BoxShadow(
+                                              color: Colors.grey.shade200,
+                                              offset: const Offset(2, 4),
+                                              blurRadius: 5,
+                                              spreadRadius: 2)
+                                        ],
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.centerLeft,
+                                            end: Alignment.centerRight,
+                                            colors: [
+                                              Color(0xfffbb448),
+                                              Color(0xfff7892b)
+                                            ])),
+                                    child: const Text(
+                                      'Register Now',
+                                      style: TextStyle(
+                                          fontSize: 20, color: Colors.white),
+                                    ),
+                                  ),
+                                  onTap: () async {
+                                    _formKey.currentState!.validate();
 
-                                  if (_confirmpasswordController!.text ==
-                                      _passwordController!.text) {
-                                    if (!await user.signUp(
-                                        context,
-                                        _email!.text.trim(),
-                                        _passwordController!.text.trim())) {
+                                    if (_confirmpasswordController!.text ==
+                                        _passwordController!.text) {
+                                      if (!await user.signUp(
+                                          context,
+                                          _email!.text.trim(),
+                                          _passwordController!.text.trim())) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                                content: Text(
+                                                    "Something Went Wrong")));
+                                      } else {
+                                        await _userHandler.addUsers(UserModel(
+                                            username: user.user!.displayName,
+                                            email: user.user!.email.toString(),
+                                            phone: user.user!.phoneNumber,
+                                            country: ""));
+                                        SchedulerBinding.instance
+                                            .addPostFrameCallback((_) {
+                                          Navigator.of(context).pop();
+                                        });
+                                      }
+                                    } else {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(
+                                              backgroundColor: Colors.red,
                                               content: Text(
-                                                  "Something Went Wrong")));
-                                    } else {
-                                      await _userHandler.addUsers(UserModel(
-                                          username: "",
-                                          email: user.user!.email.toString(),
-                                          phone: "", country: ''));
-                                      Navigator.of(context).pop();
+                                                  "Passwords do not match")));
                                     }
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            backgroundColor: Colors.red,
-                                            content: Text(
-                                                "Passwords do not match")));
-                                  }
-                                }),
-                        SizedBox(height: height * .14),
-                        SignInButton(
-                          Buttons.Google,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                                  }),
+                          SizedBox(height: height * .14),
+                          SignInButton(
+                            Buttons.Google,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            elevation: 10,
+                            padding: const EdgeInsets.only(
+                                left: 40, right: 40, top: 5, bottom: 5),
+                            text: "Sign up with Google",
+                            onPressed: () async {
+                              final provider = Provider.of<UserRepository>(
+                                  context,
+                                  listen: false);
+                              provider.signInWithGoogle().catchError((e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(e.toString())));
+                              });
+                            },
                           ),
-                          elevation: 10,
-                          padding: const EdgeInsets.only(
-                              left: 40, right: 40, top: 5, bottom: 5),
-                          text: "Sign up with Google",
-                          onPressed: () async {
-                            final provider = Provider.of<UserRepository>(
-                                context,
-                                listen: false);
-                            provider.signInWithGoogle().catchError((e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(e.toString())));
-                            });
-                          },
-                        ),
-                        SizedBox(height: height * .14),
-                      ],
+                          SizedBox(height: height * .14),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }),
-            ),
-            Positioned(top: 40, left: 0, child: _backButton()),
-          ]),
+                  );
+                }),
+              ),
+              Positioned(top: 40, left: 0, child: _backButton()),
+            ]),
+          ),
         ),
       ),
     );

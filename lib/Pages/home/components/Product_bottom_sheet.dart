@@ -82,7 +82,7 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                                 itemCount: snapshot.data?.docs.length ?? 0,
                                 itemBuilder: (context, index) {
                                   final product = ProductModel.fromSnapshot(
-                                      snapshot.data!.docs[index]);
+                                      data!.docs[index]);
                                   return ProductCard(
                                       //index:index,
                                       product: product,
@@ -140,7 +140,11 @@ class _ProductBottomSheet extends State<ProductBottomSheet> {
                             topMargin: 16 +
                                 percentage * MediaQuery.of(context).padding.top,
                           ),
-                          const MenuButton(),
+                          MenuButton(
+                            press: () {
+                              scrollController;
+                            },
+                          ),
                         ],
                       );
                     }),
@@ -308,8 +312,8 @@ class SheetHeader extends StatelessWidget {
 }
 
 class MenuButton extends StatelessWidget {
-  const MenuButton({Key? key}) : super(key: key);
-
+  MenuButton({Key? key, required this.press}) : super(key: key);
+  VoidCallback press;
   @override
   Widget build(BuildContext context) {
     return const Positioned(

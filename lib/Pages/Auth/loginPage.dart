@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_types_as_parameter_names, non_constant_identifier_names
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Utils/Auth/Auth.dart';
@@ -94,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
   }*/
 
   Widget _submitButton() {
-    return Builder(builder: (context) {
+    return Builder(builder: (BuildContext context) {
       final provider = Provider.of<UserRepository>(context, listen: false);
       return GestureDetector(
         child: Container(
@@ -126,13 +127,13 @@ class _LoginPageState extends State<LoginPage> {
           if (_formKey.currentState!.validate()) {
             if (!await provider.signIn(
                 context, _email!.text.trim(), _password!.text.trim())) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Something Went Wrong")));
+             
+              print("Something went wrong...........:  ");
             }
-
-            /*ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Something Went Wrong")));*/
-
+          } else {
+            SchedulerBinding.instance.addPostFrameCallback((_) {
+              Navigator.of(context).pop();
+            });
           }
         },
       );

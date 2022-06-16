@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/Profile/components/Help_center.dart';
 import 'package:truthsoko/Pages/Profile/components/RecentlyViewed.dart';
 import 'package:truthsoko/Pages/Profile/components/edit_profile.dart';
+import 'package:truthsoko/Pages/Profile/components/savedItems.dart';
 import 'package:truthsoko/Utils/Auth/Auth.dart';
 import 'package:truthsoko/src/Widget/constants.dart';
 
@@ -141,8 +142,9 @@ class ProfileScreen extends StatelessWidget {
                                                   secondaryAnimation) =>
                                               FadeTransition(
                                                   opacity: animation,
-                                                  child:
-                                                      const RecentlyViewed()),
+                                                  child: RecentlyViewed(
+                                                    user: user,
+                                                  )),
                                         ),
                                       );
                                     },
@@ -169,7 +171,22 @@ class ProfileScreen extends StatelessWidget {
                                   ProfileWidget(
                                     label: "Saved Items",
                                     icon: Icons.save_alt_sharp,
-                                    onClick: () {},
+                                    onClick: () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          transitionDuration:
+                                              const Duration(milliseconds: 500),
+                                          reverseTransitionDuration:
+                                              const Duration(milliseconds: 500),
+                                          pageBuilder: (context, animation,
+                                                  secondaryAnimation) =>
+                                              FadeTransition(
+                                                  opacity: animation,
+                                                  child: Saved(user: user)),
+                                        ),
+                                      );
+                                    },
                                   ),
                                   ProfileWidget(
                                     label: "Suggestions",

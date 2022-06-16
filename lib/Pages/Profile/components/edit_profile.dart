@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/Profile/components/editStateprovider.dart';
+import 'package:truthsoko/Utils/Auth/Auth.dart';
 import 'package:truthsoko/src/Widget/textfield_widget.dart';
 import 'package:truthsoko/src/models/textview_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,8 +27,6 @@ class _EditProfileState extends State<EditProfile>
   late Animation animate;
   @override
   Widget build(BuildContext context) {
-    final _oldPassController = TextEditingController();
-    final _newPassController = TextEditingController();
     final phone = TextEditingController();
     final email = TextEditingController();
     final username = TextEditingController();
@@ -48,7 +47,7 @@ class _EditProfileState extends State<EditProfile>
 
     controller = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 500));
-    animate = Tween(begin: -1.0, end: 0.0)
+    animate = Tween(begin: -0.5, end: 0.0)
         .animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
     Widget _listTile(ValueChanged<ProfileEdit> onSelected, ProfileEdit model) {
       return Consumer<ProfileEditState>(builder: (context, edit, child) {
@@ -85,52 +84,40 @@ class _EditProfileState extends State<EditProfile>
       });
     }
 
-    Widget _editPasswordList() {
-      return Container(
-        color: Colors.white12,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              "Change Password",
-              style: TextStyle(fontSize: 20),
+    _editPasswordList() {
+      return ChangeNotifierProvider(
+        create: (context) => UserRepository.instance(),
+        child: Builder(builder: (context) {
+          final provider = Provider.of<UserRepository>(context);
+          return Container(
+            color: Colors.white12,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  "Change Password",
+                  style: TextStyle(fontSize: 20),
+                ),
+                TextFieldWidget(
+                    hintText: "Enter email",
+                    prefixIconData: Icons.email,
+                    suffixIconData: null,
+                    obscureText: false,
+                    onChanged: (String) {},
+                    controller: email),
+                const SizedBox(
+                  height: 5,
+                ),
+                TextButton(
+                  onPressed: () {
+                    provider.resetPassword(context, email.text.trim());
+                  },
+                  child: const Text("Reset Password"),
+                )
+              ],
             ),
-            TextFieldWidget(
-                hintText: "Old Password",
-                prefixIconData: Icons.lock_clock_rounded,
-                suffixIconData: null,
-                obscureText: false,
-                onChanged: (String) {},
-                controller: _oldPassController),
-            const SizedBox(
-              height: 5,
-            ),
-            TextFieldWidget(
-                hintText: "New Password",
-                prefixIconData: Icons.local_activity_outlined,
-                suffixIconData: null,
-                obscureText: false,
-                onChanged: (String) {},
-                controller: _newPassController),
-            const SizedBox(
-              height: 5,
-            ),
-            TextFieldWidget(
-                hintText: "Confirm Password",
-                prefixIconData: null,
-                suffixIconData: null,
-                obscureText: false,
-                onChanged: (String) {},
-                controller: _newPassController),
-            const SizedBox(
-              height: 5,
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text("Modify"),
-            )
-          ],
-        ),
+          );
+        }),
       );
     }
 
@@ -170,7 +157,7 @@ class _EditProfileState extends State<EditProfile>
                 suffixIconData: Icons.send,
                 obscureText: false,
                 onChanged: (String) {},
-                controller: _newPassController),
+                controller: phone),
             const SizedBox(
               height: 5,
             ),
@@ -223,8 +210,8 @@ class _EditProfileState extends State<EditProfile>
                 prefixIconData: Icons.local_activity_outlined,
                 suffixIconData: Icons.send,
                 obscureText: false,
-                onChanged: (String) {},
-                controller: _newPassController),
+                onChanged: (string) {},
+                controller: email),
             const SizedBox(
               height: 5,
             ),

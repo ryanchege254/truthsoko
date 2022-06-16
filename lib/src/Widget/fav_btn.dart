@@ -9,7 +9,7 @@ import 'constants.dart';
 
 class FavBtn extends StatelessWidget {
   final User user;
-  final ProductModel product;
+  final  product;
   const FavBtn({
     Key? key,
     this.radius = 15,
@@ -21,30 +21,43 @@ class FavBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (context) => FavBtnProvider(),
-        child: Consumer(builder: (context, FavBtnProvider provider, child) {
-          return InkWell(
-            onTap: () {
-              provider.onLiked = !provider.onLiked;
-              ProductHandler().addProduct(product, user);
-            },
-            child: SizedBox(
-              height: 20,
-              width: 20,
-              child: CircleAvatar(
-                radius: radius,
-                backgroundColor: const Color(0xFFE3E2E3),
-                child: SvgPicture.asset(
-                  "assets/icons/heart.svg",
-                  color: context.read<FavBtnProvider>().onLiked
-                      ? Global.green
-                      : const Color.fromARGB(255, 179, 179, 179),
-                ),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: ((context) => FavBtnProvider())),
+        ChangeNotifierProvider(create: (context) => ProductHandler())
+      ],
+      child: Consumer<FavBtnProvider>(builder: (context, provider, child) {
+        final handler = Provider.of<ProductHandler>(context);
+        return InkWell(
+          onTap: () async {
+            provider.onLiked = !provider.onLiked;
+            if (await provider.onLiked) {
+              await handler
+                  .saveProduct(product, user)
+                  .then((value) => print("...........product saved"));
+            } else if ( !await provider._onLiked) {
+              await handler
+                  .unsaveProduct(product, user)
+                  .then((value) => print("..........product deleted"));
+            }
+          },
+          child: SizedBox(
+            height: 20,
+            width: 20,
+            child: CircleAvatar(
+              radius: radius,
+              backgroundColor: const Color(0xFFE3E2E3),
+              child: SvgPicture.asset(
+                "assets/icons/heart.svg",
+                color: context.read<FavBtnProvider>().onLiked
+                    ? Global.green
+                    : const Color.fromARGB(255, 179, 179, 179),
               ),
             ),
-          );
-        }));
+          ),
+        );
+      }),
+    );
   }
 }
 

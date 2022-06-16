@@ -187,7 +187,6 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     super.initState();
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 350));
-    
   }
 
   @override
@@ -286,7 +285,9 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
                       switch (change.state) {
                         case PageState.homescreen:
                           return Home(
-                              controller: tabController, animation: animation);
+                              user: widget.user,
+                              controller: tabController,
+                              animation: animation);
                         case PageState.categories:
                           return CategoryScreen(user: widget.user);
                         case PageState.notification:
@@ -317,9 +318,14 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
 }
 
 class Home extends StatelessWidget {
+  final User user;
   final AnimationController controller;
   final Animation animation;
-  const Home({Key? key, required this.controller, required this.animation})
+  const Home(
+      {Key? key,
+      required this.controller,
+      required this.animation,
+      required this.user})
       : super(key: key);
 
   @override
@@ -359,11 +365,17 @@ class Home extends StatelessWidget {
                             builder: (context, TabSelected tabselected, child) {
                           switch (tabselected.selected) {
                             case TabWidget.Favorites:
-                              return const Favorites();
+                              return Favorites(
+                                user: user,
+                              );
                             case TabWidget.Recent:
-                              return const SlidingCardsView();
+                              return SlidingCardsView(
+                                user: user,
+                              );
                             case TabWidget.New:
-                              return const SlidingCardsView();
+                              return SlidingCardsView(
+                                user: user,
+                              );
                           }
                         }),
                       );
@@ -372,7 +384,9 @@ class Home extends StatelessWidget {
                   ),
                 ],
               ),
-              const ProductBottomSheet()
+              ProductBottomSheet(
+                user: user,
+              )
             ],
           ),
         ));

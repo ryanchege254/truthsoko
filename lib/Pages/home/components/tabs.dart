@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Tabs extends StatelessWidget {
-  const Tabs({Key? key}) : super(key: key);
+  final AnimationController controller;
+  const Tabs({Key? key, required this.controller}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,7 @@ class Tabs extends StatelessWidget {
           children: TabModel.model
               .map(
                 (model) => MyTab(
+                    controller: controller,
                     model: model,
                     onSelected: (model) {
                       tabSelected._itemSelected(model, model.tab);
@@ -29,19 +31,25 @@ class Tabs extends StatelessWidget {
 }
 
 class MyTab extends StatelessWidget {
+  final AnimationController controller;
   final ValueChanged<TabModel> onSelected;
   final TabModel model;
 
-  const MyTab({Key? key, required this.model, required this.onSelected})
+  const MyTab(
+      {Key? key,
+      required this.controller,
+      required this.model,
+      required this.onSelected})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TabSelected>(
-        builder: (context, selectedTab, child) {
+    return Consumer<TabSelected>(builder: (context, selectedTab, child) {
       return InkWell(
         onTap: () {
           selectedTab._onSelected(onSelected, model);
+
+          controller.forward().then((value) => controller.reset());
         },
         child: Container(
           padding: const EdgeInsets.all(8.0),
@@ -93,6 +101,7 @@ enum TabWidget { Favorites, Recent, New }
 class TabSelected extends ChangeNotifier {
   TabWidget tab = TabWidget.Recent;
   TabWidget get selected => tab;
+
   _onSelected(
     ValueChanged<TabModel> onSelected,
     TabModel model,
