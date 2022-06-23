@@ -25,6 +25,9 @@ class UserRepository with ChangeNotifier {
 
   Status get status => _status;
   User? get user => _user;
+  String getCurrentUID() {
+    return _auth.currentUser!.uid;
+  }
 
   Future<bool> signIn(
       BuildContext _context, String email, String password) async {
@@ -32,7 +35,8 @@ class UserRepository with ChangeNotifier {
       _status = Status.Authenticating;
       notifyListeners();
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-       
+      _user = _auth.currentUser;
+
       return true;
     } on FirebaseAuthException catch (e) {
       _status = Status.Unauthenticated;
