@@ -287,11 +287,18 @@ class _SignUpPageState extends State<SignUpPage> {
                                                 content: Text(
                                                     "Something Went Wrong")));
                                       } else {
-                                        await _userHandler.addUsers(UserModel(
-                                            username: user.user!.displayName,
-                                            email: user.user!.email.toString(),
-                                            phone: user.user!.phoneNumber,
-                                            country: ""));
+                                        await _userHandler.addUsers(
+                                            UserModel(
+                                                uid: user
+                                                    .getCurrentUID()
+                                                    .toString(),
+                                                username:
+                                                    user.user!.displayName,
+                                                email:
+                                                    user.user!.email.toString(),
+                                                phone: user.user!.phoneNumber,
+                                                country: ""),
+                                            user.getCurrentUID().toString());
                                         SchedulerBinding.instance
                                             .addPostFrameCallback((_) {
                                           Navigator.of(context).pop();

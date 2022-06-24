@@ -29,13 +29,21 @@ class UserRepository with ChangeNotifier {
     return _auth.currentUser!.uid;
   }
 
+  getProfileImage() {
+    if (_auth.currentUser!.photoURL != null) {
+      return Image.network(_auth.currentUser?.photoURL ?? "",
+          height: 100, width: 100);
+    } else {
+      return const Icon(Icons.account_circle, size: 100);
+    }
+  }
+
   Future<bool> signIn(
       BuildContext _context, String email, String password) async {
     try {
       _status = Status.Authenticating;
       notifyListeners();
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      _user = _auth.currentUser;
 
       return true;
     } on FirebaseAuthException catch (e) {
