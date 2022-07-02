@@ -1,5 +1,6 @@
 // ignore_for_file: constant_identifier_names
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,6 @@ class _EditProfileState extends State<EditProfile>
   Widget build(BuildContext context) {
     final phone = TextEditingController();
     final email = TextEditingController();
-    final username = TextEditingController();
 
     @override
     void initState() {
@@ -49,40 +49,6 @@ class _EditProfileState extends State<EditProfile>
         vsync: this, duration: const Duration(milliseconds: 500));
     animate = Tween(begin: -0.5, end: 0.0)
         .animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
-    Widget _listTile(ValueChanged<ProfileEdit> onSelected, ProfileEdit model) {
-      return Consumer<ProfileEditState>(builder: (context, edit, child) {
-        return Column(
-          children: [
-            InkWell(
-              onDoubleTap: () {
-                edit.selected == ActionsWidget.Normal;
-              },
-              onTap: () {
-                controller.reset();
-                controller.forward();
-                edit.onSelected(onSelected, model);
-              },
-              child: Container(
-                decoration: const BoxDecoration(
-                    color: Global.white,
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: ListTile(
-                  focusColor: Global.yellow,
-                  title: Text(model.title),
-                  subtitle: Text(model.subtitle,
-                      style: GoogleFonts.aclonica(
-                          color: const Color.fromARGB(255, 162, 161, 161))),
-                  trailing: const Icon(Icons.arrow_downward),
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 5,
-            )
-          ],
-        );
-      });
-    }
 
     _editPasswordList() {
       return ChangeNotifierProvider(
@@ -133,8 +99,8 @@ class _EditProfileState extends State<EditProfile>
             ),
             Container(
               color: Colors.grey,
-              child: const ListTile(
-                subtitle: Text("Current Phone No: 0737774727"),
+              child: ListTile(
+                subtitle: Text("Current Phone No: ${widget.user.phoneNumber}"),
               ),
             ),
             const SizedBox(
@@ -188,8 +154,8 @@ class _EditProfileState extends State<EditProfile>
             ),
             Container(
               color: Colors.grey,
-              child: const ListTile(
-                subtitle: Text("Current Email: user-email@gmail.com"),
+              child: ListTile(
+                subtitle: Text("Current Email:${widget.user.email}"),
               ),
             ),
             const SizedBox(
@@ -230,68 +196,148 @@ class _EditProfileState extends State<EditProfile>
       );
     }
 
+    Widget _listTile(
+      ValueChanged<ProfileEdit> onSelected,
+      ProfileEdit model,
+    ) {
+      return Consumer<ProfileEditState>(builder: (context, edit, child) {
+        return Column(
+          children: [
+            InkWell(
+              onDoubleTap: () {
+                edit.selected == ActionsWidget.Normal;
+              },
+              onTap: () {
+                controller.reset();
+                controller.forward();
+                edit.onSelected(onSelected, model);
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                    color: Global.white,
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                child: ListTile(
+                  focusColor: Global.yellow,
+                  title: Text(model.title!),
+                  trailing: const Icon(Icons.arrow_downward),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            model.isSelected
+                ? AnimatedBuilder(
+                    animation: controller,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(controller.value * 20, 1),
+                        child: child,
+                      );
+                    },
+                    child: Consumer<ProfileEditState>(
+                        builder: (context, edit, child) {
+                      switch (edit.selected) {
+                        case ActionsWidget.Normal:
+                          return Container();
+                        case ActionsWidget.EditPhone:
+                          return _editPhoneList();
+                        case ActionsWidget.EditPassword:
+                          return _editPasswordList();
+                        case ActionsWidget.EditEmail:
+                          return _editEmailList();
+                        case ActionsWidget.EditCountry:
+                          break;
+                      }
+                      return Container();
+                    }),
+                  )
+                : Container()
+          ],
+        );
+      });
+    }
+
     // TODO: implement build
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
                 backgroundColor: Global.green, title: const Text("Settings")),
             body: MultiProvider(
-              providers: [
-                ChangeNotifierProvider.value(
-                  value: TextviewModel(),
-                ),
-                ChangeNotifierProvider.value(value: ProfileEditState())
-              ],
-              child: Container(
-                  color: const Color.fromARGB(255, 216, 216, 216),
-                  padding: const EdgeInsets.all(Global.defaultPadding),
-                  child: Consumer<ProfileEditState>(
-                      builder: (context, editstate, child) {
-                    return Column(
-                      children: [
-                        ListView(
-                          padding: const EdgeInsets.all(10),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          children: ProfileEdit.model
-                              .map((model) => Column(
-                                    children: [
-                                      _listTile((model) {
-                                        editstate.itemSelected(
-                                            model, model.action);
-                                      }, model),
-                                    ],
-                                  ))
-                              .toList(),
-                        ),
-                        AnimatedBuilder(
-                          animation: controller,
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(controller.value * 20, 1),
-                              child: child,
-                            );
-                          },
-                          child: Consumer<ProfileEditState>(
-                              builder: (context, edit, child) {
-                            switch (edit.selected) {
-                              case ActionsWidget.Normal:
-                                return Container();
-                              case ActionsWidget.EditPhone:
-                                return _editPhoneList();
-                              case ActionsWidget.EditPassword:
-                                return _editPasswordList();
-                              case ActionsWidget.EditEmail:
-                                return _editEmailList();
-                              case ActionsWidget.EditCountry:
-                                break;
-                            }
-                            return Container();
-                          }),
-                        )
-                      ],
+                providers: [
+                  ChangeNotifierProvider.value(
+                      value: UserRepository.instance()),
+                  ChangeNotifierProvider.value(
+                    value: TextviewModel(),
+                  ),
+                  ChangeNotifierProvider.value(value: ProfileEditState())
+                ],
+                child: Consumer<UserRepository>(
+                  builder: (context, value, child) {
+                    return StreamBuilder(
+                      stream:
+                          UserHandler().getUSerProfile(value.getCurrentUID()),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        return Container(
+                            color: const Color.fromARGB(255, 216, 216, 216),
+                            padding:
+                                const EdgeInsets.all(Global.defaultPadding),
+                            child: Consumer<ProfileEditState>(
+                                builder: (context, editstate, child) {
+                              return Column(
+                                children: [
+                                  ListView(
+                                    padding: const EdgeInsets.all(10),
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    children: profit_model
+                                        .map((model) => Column(
+                                              children: [
+                                                _listTile(
+                                                  (model) {
+                                                    editstate.itemSelected(
+                                                        model, model.action!);
+                                                  },
+                                                  model,
+                                                ),
+                                              ],
+                                            ))
+                                        .toList(),
+                                  ),
+                                  //Textfield section
+                                  /* AnimatedBuilder(
+                                        animation: controller,
+                                        builder: (context, child) {
+                                          return Transform.translate(
+                                            offset: Offset(controller.value * 20, 1),
+                                            child: child,
+                                          );
+                                        },
+                                        child: Consumer<ProfileEditState>(
+                                            builder: (context, edit, child) {
+                                          final UserModel model = UserModel();
+                                          switch (edit.selected) {
+                                            case ActionsWidget.Normal:
+                                              return Container();
+                                            case ActionsWidget.EditPhone:
+                                              return _editPhoneList(model);
+                                            case ActionsWidget.EditPassword:
+                                              return _editPasswordList();
+                                            case ActionsWidget.EditEmail:
+                                              return _editEmailList(model);
+                                            case ActionsWidget.EditCountry:
+                                              break;
+                                          }
+                                          return Container();
+                                        }),
+                                      ) */
+                                ],
+                              );
+                            }));
+                      },
                     );
-                  })),
-            )));
+                  },
+                ))));
   }
 }

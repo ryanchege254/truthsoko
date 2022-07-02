@@ -193,11 +193,7 @@ class ProfileScreen extends StatelessWidget {
                                     icon: Icons.settings_suggest_sharp,
                                     onClick: () {},
                                   ),
-                                  ProfileWidget(
-                                    label: "Inbox",
-                                    icon: Icons.messenger_sharp,
-                                    onClick: () {},
-                                  )
+                                 
                                 ]),
                           ),
                           const Padding(

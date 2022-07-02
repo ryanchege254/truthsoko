@@ -16,7 +16,7 @@ class ProfileEditState extends ChangeNotifier {
   }
 
   itemSelected(ProfileEdit model, ActionsWidget selected) {
-    for (var item in ProfileEdit.model) {
+    for (var item in profit_model) {
       item.isSelected = false;
     }
     model.isSelected = true;
@@ -27,41 +27,27 @@ class ProfileEditState extends ChangeNotifier {
 }
 
 class ProfileEdit {
-  final String title;
-  final String subtitle;
+  final String? title;
   bool isSelected;
-  final ActionsWidget action;
+  final ActionsWidget? action;
 
-  ProfileEdit(
-      {required this.action,
-      required this.subtitle,
-      required this.title,
-      required this.isSelected});
-  static List<ProfileEdit> model = [
-    ProfileEdit(
-        subtitle: "0713344566",
-        title: "Phone Number",
-        isSelected: false,
-        action: ActionsWidget.EditPhone),
-    ProfileEdit(
-        title: "Modify Password",
-        isSelected: true,
-        subtitle: '',
-        action: ActionsWidget.EditPassword),
-    ProfileEdit(
-        title: "Email",
-        isSelected: false,
-        subtitle: 'user-email@gmail.com',
-        action: ActionsWidget.EditEmail),
-    ProfileEdit(
-        title: "Select Country",
-        isSelected: false,
-        subtitle: 'Kenya',
-        action: ActionsWidget.EditCountry),
-    ProfileEdit(
-        title: "",
-        isSelected: false,
-        subtitle: '',
-        action: ActionsWidget.Normal),
-  ];
+  ProfileEdit({this.action, this.title, required this.isSelected});
 }
+
+// ignore: non_constant_identifier_names
+List<ProfileEdit> profit_model = [
+  ProfileEdit(
+      title: "Phone Number",
+      isSelected: false,
+      action: ActionsWidget.EditPhone),
+  ProfileEdit(
+      title: "Modify Password",
+      isSelected: false,
+      action: ActionsWidget.EditPassword),
+  ProfileEdit(
+      title: "Email", isSelected: false, action: ActionsWidget.EditEmail),
+  ProfileEdit(
+      title: "Select Country",
+      isSelected: false,
+      action: ActionsWidget.EditCountry),
+];
