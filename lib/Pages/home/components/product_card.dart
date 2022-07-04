@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:truthsoko/src/Widget/fav_btn.dart';
 import 'package:truthsoko/Pages/Details/components/price.dart';
@@ -7,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:truthsoko/src/Widget/constants.dart';
 
 class ProductCard extends StatelessWidget {
-  final user;
+  final User user;
   const ProductCard({
     Key? key,
     required this.product,
     required this.percentageComplete,
     required this.press,
-    this.user,
+    required this.user,
   }) : super(key: key);
 
   final ProductModel product;
@@ -35,43 +36,41 @@ class ProductCard extends StatelessWidget {
         children: [
           InkWell(
             onTap: press,
-            child: Hero(
-                tag: "${product.documentId}",
-                child: FutureBuilder(
-                    future: ProductModel().getImage(context, product.image!),
-                    builder: ((context, AsyncSnapshot<Widget> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return Container(
-                          child: snapshot.data,
-                        );
-                      }
-                      if (snapshot.connectionState == ConnectionState.done) {
-                        return const LoadingIndicator(
-                          indicatorType: Indicator.circleStrokeSpin,
-                        );
-                      }
-                      return Container();
-                    }))),
+            child: FutureBuilder(
+                future: ProductModel().getImage(context, product.image!),
+                builder: ((context, AsyncSnapshot<Widget> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Container(
+                      child: snapshot.data,
+                    );
+                  }
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return const LoadingIndicator(
+                      indicatorType: Indicator.circleStrokeSpin,
+                    );
+                  }
+                  return Container();
+                })),
           ),
           Text(
-            "${product.title}",
+            product.title ?? "",
             style: Theme.of(context)
                 .textTheme
                 .subtitle1!
                 .copyWith(fontWeight: FontWeight.w600),
           ),
           Text(
-              "${product.category}",
+            product.category ?? "",
             style: Theme.of(context).textTheme.caption,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Price(
-                amount: "${product.price}",
+                amount: product.price ?? "",
               ),
               Hero(
-                  tag: product,
+                  tag: product.documentId ?? "",
                   child: FavBtn(
                     product: product,
                     user: user,

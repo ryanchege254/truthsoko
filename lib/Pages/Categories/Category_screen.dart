@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/Categories/components/category.dart';
 import 'package:flutter/material.dart';
-import 'package:truthsoko/Pages/Categories/components/product_icon.dart';
 import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
 import 'package:truthsoko/Utils/Database/productHandler.dart';
 import 'package:truthsoko/src/Widget/title_text.dart';
@@ -54,7 +52,7 @@ class CategoryScreen extends StatelessWidget {
                     builder: ((context, SelectedCategory selected, child) {
                       return StreamBuilder(
                           stream: ProductHandler()
-                              .fetchRelatedProducts(selected.selected!),
+                              .fetchRelatedProducts(selected.selected),
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             final data = snapshot.data;
@@ -121,7 +119,7 @@ class CategoryScreen extends StatelessWidget {
                                           ),
                                         ),
                                       );
-                                    });
+                                    }, user: user,);
                               },
                             );
                           });

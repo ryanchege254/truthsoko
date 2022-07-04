@@ -25,6 +25,7 @@ class Categories extends StatelessWidget {
                     onSelected: (category) {
                       _selected.itemSelected(category);
                       print(category.name);
+                      print(_selected.selected);
                     },
                   ),
                 )

@@ -1,7 +1,6 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/src/models/category.dart';
 import 'package:truthsoko/src/Widget/constants.dart';
@@ -82,21 +81,4 @@ class ProductIcon extends StatelessWidget {
   }
 }
 
-class SelectedCategory extends ChangeNotifier {
-  String? tab = Category().name;
-  String? get selected => tab;
 
-  onSelected(ValueChanged<Category> onSelected, Category model) {
-    onSelected(model);
-    notifyListeners();
-  }
-
-  itemSelected(Category model) {
-    for (var item in Category.categoryList) {
-      item.isSelected = false;
-    }
-    model.isSelected = true;
-    tab = selected;
-    notifyListeners();
-  }
-}
