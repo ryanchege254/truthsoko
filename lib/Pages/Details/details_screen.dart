@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:truthsoko/Utils/Database/productHandler.dart';
 import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/src/Widget/fav_btn.dart';
@@ -36,9 +37,24 @@ class _DetailsScreenState extends State<DetailsScreen> {
               clipBehavior: Clip.none,
               alignment: Alignment.center,
               children: [
-                Container(
+                SizedBox(
                   width: double.infinity,
-                  child: Image.asset(widget.product.image!),
+                  child: FutureBuilder(
+                      future: ProductModel()
+                          .getImage(context, widget.product.image!),
+                      builder: ((context, AsyncSnapshot<Widget> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return Container(
+                            child: snapshot.data,
+                          );
+                        }
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return const LoadingIndicator(
+                            indicatorType: Indicator.circleStrokeSpin,
+                          );
+                        }
+                        return Container();
+                      })),
                 ),
               ],
             ),
@@ -64,7 +80,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
               ],
             ),
           ),
-          const Expanded(
+          /* const Expanded(
             child: Padding(
               padding: EdgeInsets.all(Global.defaultPadding),
               child: Text(
@@ -75,7 +91,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 ),
               ),
             ),
-          ),
+          ),*/
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -96,7 +112,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   Expanded(
                     child: StreamBuilder(
                         stream: ProductHandler()
-                            .fetchRelatedProducts(widget.product.category!),
+                            .fetchRelatedProducts("${widget.product.category}"),
                         builder:
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           final data = snapshot.data;
@@ -235,7 +251,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
       ),
       actions: [
         FavBtn(
-          radius: 20,
+          radius: 30,
           product: widget.product,
           user: widget.user,
         ),

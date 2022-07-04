@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:truthsoko/Utils/Auth/Auth.dart';
 import 'package:truthsoko/Utils/Database/productHandler.dart';
 import 'package:truthsoko/src/models/Product.dart';
 
@@ -9,7 +10,7 @@ import 'constants.dart';
 
 class FavBtn extends StatelessWidget {
   final User user;
-  final  product;
+  final ProductModel product;
   const FavBtn({
     Key? key,
     this.radius = 15,
@@ -24,20 +25,22 @@ class FavBtn extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: ((context) => FavBtnProvider())),
-        ChangeNotifierProvider(create: (context) => ProductHandler())
+        ChangeNotifierProvider(create: (context) => ProductHandler()),
       ],
       child: Consumer<FavBtnProvider>(builder: (context, provider, child) {
         final handler = Provider.of<ProductHandler>(context);
+
         return InkWell(
           onTap: () async {
             provider.onLiked = !provider.onLiked;
             if (await provider.onLiked) {
+            
               await handler
-                  .saveProduct(product, user)
+                  .saveProduct(user.uid, product)
                   .then((value) => print("...........product saved"));
-            } else if ( !await provider._onLiked) {
+            } else if (!await provider.onLiked) {
               await handler
-                  .unsaveProduct(product, user)
+                  .unsaveProduct(product, user.uid)
                   .then((value) => print("..........product deleted"));
             }
           },
