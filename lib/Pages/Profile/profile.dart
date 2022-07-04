@@ -44,26 +44,23 @@ class ProfileScreen extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  const CircleAvatar(
-                                    radius: 50,
-                                    backgroundColor: Colors.transparent,
-                                    backgroundImage: AssetImage(
-                                        "assets/images/QuestionMark.jpg"),
-                                  ),
+                                  Provider.of<UserRepository>(context,
+                                          listen: false)
+                                      .getProfileImage(),
                                   const SizedBox(
                                     width: 8,
                                   ),
                                   Column(
                                     children: [
                                       Text(
-                                        "Username",
+                                        user.displayName!,
                                         style: GoogleFonts.acme(
                                           fontSize: 25,
                                           color: Global.white,
                                         ),
                                       ),
                                       Text(
-                                        "user-email@gmail.com",
+                                        user.email!,
                                         style: GoogleFonts.acme(
                                           color: Global.white,
                                         ),
@@ -193,7 +190,6 @@ class ProfileScreen extends StatelessWidget {
                                     icon: Icons.settings_suggest_sharp,
                                     onClick: () {},
                                   ),
-                                 
                                 ]),
                           ),
                           const Padding(

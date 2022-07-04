@@ -13,7 +13,7 @@ import 'package:truthsoko/Pages/screen_changeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:truthsoko/Pages/home/components/Drawer.dart';
 import '../Notification/Notification.dart';
-import 'components/header.dart';
+import '../../src/Widget/header.dart';
 import 'components/sliding_cards.dart';
 import 'components/tabs.dart';
 
@@ -243,7 +243,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     tabController =
         AnimationController(vsync: this, duration: const Duration(seconds: 1));
 
-    animation = Tween(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+    animation = Tween(begin: 0.0, end: 0.0).animate(CurvedAnimation(
       parent: tabController,
       curve: Curves.easeInOut,
     ));
@@ -360,7 +360,7 @@ class Home extends StatelessWidget {
                     builder: (context, child) {
                       return Transform(
                         transform: Matrix4.translationValues(
-                            animation.value * width, 0.0, 0.0),
+                            animation.value, 0.0, 0.0),
                         child: Consumer<TabSelected>(
                             builder: (context, TabSelected tabselected, child) {
                           switch (tabselected.selected) {
@@ -369,14 +369,17 @@ class Home extends StatelessWidget {
                                 user: user,
                               );
                             case TabWidget.Recent:
-                              return SlidingCardsView(
+                              /* return SlidingCardsView(
                                 user: user,
-                              );
+                              );*/
+                              break;
                             case TabWidget.New:
-                              return SlidingCardsView(
+                              /* return SlidingCardsView(
                                 user: user,
-                              );
+                              );*/
+                              break;
                           }
+                          return Container();
                         }),
                       );
                     },
