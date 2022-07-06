@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_types_as_parameter_names, non_constant_identifier_names
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -28,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController? _email = TextEditingController();
   final TextEditingController? _password = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  late ScaffoldMessengerState _scaffold;
 
   Widget _backButton() {
     return InkWell(
@@ -48,96 +50,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  /*Widget _entryField(String title, IconData prefixIcon, String hintTexts,
-      {bool isPassword = false}) {
-    IconData? prefixIcon;
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          /*TextField(
-              obscureText: isPassword,
-              decoration: const InputDecoration(
-                focusColor: Global.green,
-                border: InputBorder.none,
-                fillColor: Color(0xfff3f3f4),
-                filled: true,
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Global.green,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                labelText: hintTexts,
-                prefixIcon: Icon(
-                  prefixIcon,
-                  size: 18,
-                  color: Global.orange,
-                ),
-              )),*/
-        ],
-      ),
-    );
-  }*/
-
-  Widget _submitButton() {
-    return Builder(builder: (BuildContext context) {
-      final provider = Provider.of<UserRepository>(context, listen: false);
-      return GestureDetector(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                    color: Colors.grey.shade200,
-                    offset: const Offset(2, 4),
-                    blurRadius: 5,
-                    spreadRadius: 2)
-              ],
-              gradient: const LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Color(0xfffbb448),
-                    Color.fromARGB(255, 186, 247, 43)
-                  ])),
-          child: const Text(
-            'Login',
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        ),
-        onTap: () async {
-          if (_formKey.currentState!.validate()) {
-            if (!await provider.signIn(
-                context, _email!.text.trim(), _password!.text.trim())) {
-             
-              print("Something went wrong...........:  ");
-            }
-          } else {
-            SchedulerBinding.instance.addPostFrameCallback((_) {
-              Navigator.of(context).pop();
-            });
-          }
-        },
-      );
-    });
   }
 
   Widget _divider() {
@@ -239,6 +151,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
+
     @override
     // ignore: unused_element
     void initState() {
@@ -257,8 +170,6 @@ class _LoginPageState extends State<LoginPage> {
             ],
             child: Consumer<UserRepository>(
                 builder: (context, UserRepository user, child) {
-              final provider =
-                  Provider.of<UserRepository>(context, listen: false);
               return SingleChildScrollView(
                 child: Stack(
                   children: <Widget>[
@@ -321,7 +232,8 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                     ]),
                                 const SizedBox(height: 20),
-                                provider.status == Status.Authenticating
+                                context.read<UserRepository>().status ==
+                                        Status.Authenticating
                                     ? const Padding(
                                         padding: EdgeInsets.all(80),
                                         child: LoadingIndicator(
@@ -334,7 +246,56 @@ class _LoginPageState extends State<LoginPage> {
                                           ],
                                         ),
                                       )
-                                    : _submitButton(),
+                                    : GestureDetector(
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 15),
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(5)),
+                                              boxShadow: <BoxShadow>[
+                                                BoxShadow(
+                                                    color: Colors.grey.shade200,
+                                                    offset: const Offset(2, 4),
+                                                    blurRadius: 5,
+                                                    spreadRadius: 2)
+                                              ],
+                                              gradient: const LinearGradient(
+                                                  begin: Alignment.centerLeft,
+                                                  end: Alignment.centerRight,
+                                                  colors: [
+                                                    Color(0xfffbb448),
+                                                    Color.fromARGB(
+                                                        255, 186, 247, 43)
+                                                  ])),
+                                          child: const Text(
+                                            'Login',
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        onTap: () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            if (!await context
+                                                .read<UserRepository>()
+                                                .signIn(
+                                                    context,
+                                                    _email!.text.trim(),
+                                                    _password!.text.trim())) {
+                                              print(
+                                                  "///////////////////Something went wrong...........:  ");
+                                            } else {
+                                              Navigator.pop(context);
+                                            }
+                                          }
+                                        },
+                                      ),
                                 GestureDetector(
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(

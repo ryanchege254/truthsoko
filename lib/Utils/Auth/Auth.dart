@@ -1,9 +1,11 @@
 // ignore_for_file: constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:truthsoko/Utils/Auth/AuthErrors.dart';
 
 import '../../src/Widget/constants.dart';
 
@@ -11,7 +13,6 @@ enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
 class UserRepository with ChangeNotifier {
   final FirebaseAuth _auth;
-  late String errorMsg;
   User? _user;
   final GoogleSignIn _googleSignIn;
   GoogleSignInAccount? _signInAccount;
@@ -32,9 +33,9 @@ class UserRepository with ChangeNotifier {
   getProfileImage() {
     if (_auth.currentUser!.photoURL != null) {
       return Image.network(_auth.currentUser?.photoURL ?? "",
-          height: 100, width: 100);
+          height: 50, width: 50);
     } else {
-      return const Icon(Icons.account_circle, size: 100);
+      return const Icon(Icons.account_circle, size: 50);
     }
   }
 
@@ -48,17 +49,7 @@ class UserRepository with ChangeNotifier {
       return true;
     } on FirebaseAuthException catch (e) {
       _status = Status.Unauthenticated;
-      switch (e.code) {
-        case 'wrong-password':
-          errorMsg = 'Incorrect email/password';
-
-          break;
-        case 'user-not-found':
-          errorMsg = 'Incorrect email/password';
-          break;
-        default:
-      }
-
+      showMessage(_context, catchErrors(e.code));
       notifyListeners();
       return false;
     }
@@ -80,18 +71,8 @@ class UserRepository with ChangeNotifier {
       }
       return true;
     } on FirebaseAuthException catch (e) {
-      switch (e.code) {
-        case 'wrong-password':
-          errorMsg = 'Incorrect email/password';
-
-          break;
-        case 'user-not-found':
-          errorMsg = 'Incorrect email/password';
-          break;
-        default:
-      }
-
       _status = Status.Unauthenticated;
+      showMessage(_context, catchErrors(e.code));
       notifyListeners();
       return false;
     }
@@ -135,23 +116,18 @@ class UserRepository with ChangeNotifier {
     try {
       if (user!.emailVerified) {
         await FirebaseAuth.instance
-            .sendPasswordResetEmail(email: _forgotPassword);
-        ScaffoldMessenger.of(_context).showSnackBar(const SnackBar(
-          content: Text("Password Reset Email Sent"),
-          backgroundColor: Global.green,
-        ));
+            .sendPasswordResetEmail(email: _forgotPassword)
+            .then(
+                (value) => showMessage(_context, "Password Reset Email Sent"));
+
         Navigator.of(_context).popUntil((route) => route.isFirst);
       } else {
-        ScaffoldMessenger.of(_context).showSnackBar(const SnackBar(
-          content: Text(
-              "Check your email for verification! Ensure your email is verified"),
-          backgroundColor: Colors.redAccent,
-        ));
+        showMessage(_context,
+            "Check your email for verification! Ensure your email is verified");
       }
       notifyListeners();
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(_context)
-          .showSnackBar(SnackBar(content: Text(e.message.toString())));
+      showMessage(_context, e.message.toString());
       Navigator.of(_context).pop();
       notifyListeners();
     }
@@ -168,15 +144,15 @@ class UserRepository with ChangeNotifier {
     notifyListeners();
   }
 
-  void show(BuildContext _context, String message) {
-    ScaffoldMessenger.of(_context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
+  void showMessage(BuildContext _context, String message) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      ScaffoldMessenger.of(_context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent,
           content: Text(message),
           behavior: SnackBarBehavior.floating,
         ),
       );
+    });
   }
 }

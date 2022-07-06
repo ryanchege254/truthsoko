@@ -8,13 +8,13 @@ import 'package:truthsoko/Pages/Profile/profile.dart';
 import 'package:truthsoko/Pages/home/components/Product_bottom_sheet.dart';
 import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
 import 'package:truthsoko/Pages/home/components/favorites.dart';
+import 'package:truthsoko/Pages/home/components/recent.dart';
 import 'package:truthsoko/Utils/Auth/Auth.dart';
 import 'package:truthsoko/Pages/screen_changeProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:truthsoko/Pages/home/components/Drawer.dart';
 import '../Notification/Notification.dart';
 import '../../src/Widget/header.dart';
-import 'components/sliding_cards.dart';
 import 'components/tabs.dart';
 
 // Today i will show you how to implement the animation
@@ -251,8 +251,7 @@ class _HomeScreen extends State<HomeScreen> with TickerProviderStateMixin {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: ScreenChange()),
-        ChangeNotifierProvider(
-            create: ((context) => UserRepository.instance())),
+        ChangeNotifierProvider.value(value: UserRepository.instance()),
       ],
       child: WillPopScope(
         onWillPop: () async {
@@ -369,17 +368,15 @@ class Home extends StatelessWidget {
                                 user: user,
                               );
                             case TabWidget.Recent:
-                              /* return SlidingCardsView(
-                                user: user,
-                              );*/
+                              return Recent(user: user);
+                              // ignore: dead_code
                               break;
                             case TabWidget.New:
-                              /* return SlidingCardsView(
+                              return Recent(
                                 user: user,
-                              );*/
-                              break;
+                              );
                           }
-                          return Container();
+                          //return Container();
                         }),
                       );
                     },

@@ -282,10 +282,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                           context,
                                           _email!.text.trim(),
                                           _passwordController!.text.trim())) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(const SnackBar(
-                                                content: Text(
-                                                    "Something Went Wrong")));
+                                        print(
+                                            "//////////////////////// Something went wrong.................");
                                       } else {
                                         await _userHandler.addUsers(
                                             UserModel(
@@ -299,10 +297,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                                 phone: user.user!.phoneNumber,
                                                 country: ""),
                                             user.getCurrentUID().toString());
-                                        SchedulerBinding.instance
-                                            .addPostFrameCallback((_) {
-                                          Navigator.of(context).pop();
-                                        });
+                                        Navigator.pop(context);
                                       }
                                     } else {
                                       ScaffoldMessenger.of(context)
