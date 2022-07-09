@@ -53,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                                   Column(
                                     children: [
                                       Text(
-                                        user.displayName!,
+                                        user.displayName ?? "",
                                         style: GoogleFonts.acme(
                                           fontSize: 25,
                                           color: Global.white,
@@ -128,6 +128,8 @@ class ProfileScreen extends StatelessWidget {
                                     label: "Recently Viewed",
                                     icon: Icons.recent_actors_sharp,
                                     onClick: () {
+                                      /* print(
+                                          "...............................UserId........${user.uid}"); */
                                       Navigator.push(
                                         context,
                                         PageRouteBuilder(
@@ -225,14 +227,14 @@ class ProfileScreen extends StatelessWidget {
                                 const Icon(
                                   FontAwesomeIcons.signOutAlt,
                                   color: Colors.white,
-                                  size: 25,
+                                  size: 16,
                                 ),
                                 const SizedBox(
                                   width: 10,
                                 ),
                                 Text("Sign Out",
                                     style: GoogleFonts.acme(
-                                      fontSize: 25,
+                                      fontSize: 16,
                                       color: Colors.white,
                                     ))
                               ],
@@ -279,7 +281,7 @@ class ProfileWidget extends StatelessWidget {
         const SizedBox(
           height: 5,
         ),
-        Text(label, style: GoogleFonts.acme())
+        Text(label, style: GoogleFonts.acme(fontSize: 14))
       ],
     );
   }

@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:truthsoko/Utils/Database/productHandler.dart';
-
 import '../../../src/Widget/constants.dart';
 import '../../../src/Widget/fav_btn.dart';
 import '../../Details/components/price.dart';
@@ -17,11 +15,16 @@ class Favorites extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+    final productHandler = ProductHandler();
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.70,
       child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Products").snapshots(),
+          stream: /* FirebaseFirestore.instance.collection("Products").snapshots(), */
+              FirebaseFirestore.instance
+                  .collection("Users")
+                  .doc(user.uid)
+                  .collection("SavedItems")
+                  .snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
               print("Error.............${snapshot.error}");
@@ -124,8 +127,9 @@ class FavoriteCard extends StatelessWidget {
               ]),
               child: InkWell(
                 onTap: press,
-                child: Hero(
-                  tag: product.documentId!, // change to productID later
+                child: Container(
+                  decoration:
+                      BoxDecoration(borderRadius: BorderRadius.circular(10)),
                   child: FutureBuilder(
                     future: ProductModel().getImage(context, product.image!),
                     builder: (context, AsyncSnapshot<Widget> snapshot) {
@@ -155,7 +159,7 @@ class FavoriteCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      product.title!,
+                      product.title ?? "",
                       style: Theme.of(context)
                           .textTheme
                           .subtitle1!
@@ -164,7 +168,7 @@ class FavoriteCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      "Fruits",
+                      product.category ?? "",
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
@@ -172,7 +176,7 @@ class FavoriteCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Price(amount: "20.00"),
+                        Price(amount: product.price ?? ""),
                         const SizedBox(
                           width: 35,
                         ),

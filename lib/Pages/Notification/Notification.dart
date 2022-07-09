@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:truthsoko/Pages/Profile/components/header.dart';
+import 'package:truthsoko/src/Widget/header.dart';
 import '../../src/Widget/constants.dart';
 import 'components/messagemodel.dart';
 import 'components/messagewidget.dart';

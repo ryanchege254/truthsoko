@@ -24,17 +24,23 @@ class RecentlyViewedState extends State<RecentlyViewed> {
         title: const Text("Recently viewed"),
         backgroundColor: Global.green,
       ),
-      body: StreamBuilder(
-          stream: ProductHandler().fetchRecentItems(widget.user.uid),
-          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            final data = snapshot.data!.docs;
-            return Container(
-                padding: const EdgeInsets.all(Global.defaultPadding),
-                child: Column(
-                  children: [
-                    Expanded(child: productlist(widget.user, snapshot))
-                  ],
-                ));
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection("Users")
+              .doc(widget.user.uid)
+              .collection("SavedItems")
+              .snapshots(),
+          builder: (context, snapshot) {
+            //final data = snapshot.data!.docs;
+            if (snapshot.hasError) {
+              print(
+                  "SnapshotError...........................${snapshot.error}");
+            }
+            return Column(
+              children: [
+                Expanded(child: productlist(widget.user, snapshot))
+              ],
+            );
           }),
     );
   }

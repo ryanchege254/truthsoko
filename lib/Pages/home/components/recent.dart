@@ -21,7 +21,8 @@ class Recent extends StatelessWidget {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.70,
       child: StreamBuilder(
-          stream: productHandler.fetchSavedItems(user.uid),
+          stream: FirebaseFirestore.instance.collection("Products").snapshots(),
+          /* productHandler.fetchSavedItems(user.uid), */
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
               print("Error.............${snapshot.error}");

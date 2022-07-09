@@ -15,16 +15,18 @@ Widget productlist(final user, AsyncSnapshot<QuerySnapshot> snapshot) {
       crossAxisSpacing: Global.defaultPadding,
     ),
     padding: const EdgeInsets.only(right: 32, top: 128),
-    itemCount: snapshot.data?.docs.length ?? 0,
+    itemCount: snapshot.data!.docs.length,
     itemBuilder: (context, index) {
       if (snapshot.data!.docs.isEmpty) {
         print("......................................No data");
         return const Center(
           child: Text(
-            "No products are saved yet",
-            style: TextStyle(color: Colors.black),
+            "No Items have been saved yet",
+            style: TextStyle( color: Colors.black),
           ),
         );
+      } else if (snapshot.data != null) {
+        print("........................................not null");
       }
       final ProductModel product =
           ProductModel.fromSnapshot(snapshot.data!.docs[index]);

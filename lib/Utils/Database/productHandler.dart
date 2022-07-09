@@ -9,47 +9,35 @@ import '../Auth/Auth.dart';
 class ProductHandler extends ChangeNotifier {
   var firestoreInstance = FirebaseFirestore.instance;
 
-  Future saveProduct(BuildContext context, ProductModel productModel) async {
-    String firebaseUser = Provider.of<UserRepository>(context ,listen: false).getCurrentUID();
-
+  Future saveProduct(String firebaseUser, ProductModel productModel) async {
     await firestoreInstance
         .collection("Users")
         .doc(firebaseUser)
-        .collection("Saved Items")
+        .collection("SavedItems")
         .add(productModel.toJson());
     notifyListeners();
   }
 
-  Future unsaveProduct(ProductModel productModel, BuildContext context) async {
-        String firebaseUser = Provider.of<UserRepository>(context, listen: false).getCurrentUID();
-
+  Future unsaveProduct(ProductModel productModel, String firebaseUser) async {
     String docId = firestoreInstance
         .collection("Users")
         .doc(firebaseUser)
-        .collection("Saved Items")
+        .collection("SavedItems")
         .doc()
         .id;
     await firestoreInstance
         .collection("Users")
         .doc(firebaseUser.toString())
-        .collection("Saved Items")
+        .collection("SavedItems")
         .doc(docId)
         .delete();
   }
 
-  fetchSavedItems(String id) {
-    firestoreInstance
+  fetchSavedItems(User user) {
+    FirebaseFirestore.instance
         .collection("Users")
-        .doc(id)
-        .collection("Saved Items")
-        .snapshots();
-  }
-
-  fetchRecentItems(String id) {
-    firestoreInstance
-        .collection("Users")
-        .doc(id)
-        .collection("Saved Items")
+        .doc(user.uid)
+        .collection("SavedItems")
         .snapshots();
   }
 
@@ -58,5 +46,17 @@ class ProductHandler extends ChangeNotifier {
         .collection("Products")
         .where("category", isEqualTo: category)
         .snapshots();
+  }
+
+  onPressed() {
+    firestoreInstance.collection("Users").get().then((querySnapshot) {
+      for (var result in querySnapshot.docs) {
+        firestoreInstance
+            .collection("Users")
+            .doc(result.id)
+            .collection("SavedItems")
+            .get();
+      }
+    });
   }
 }

@@ -9,10 +9,11 @@
 //     final productModel = productModelFromJson(jsonString);
 
 import 'dart:convert';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 ProductModel productModelFromJson(String str) =>
     ProductModel.fromJson(json.decode(str));
@@ -39,12 +40,16 @@ class ProductModel {
   String? quantity;
   bool? isliked;
   Future<Widget> getImage(BuildContext context, String imageName) async {
-    Image? image;
+    Widget? image;
     await FirebaseImageStorage.loadimage(context, imageName).then((value) {
-      image = Image.network(
+      image = CachedNetworkImage(
+        imageUrl: value.toString(),
+        placeholder: (context, url) => const CircularProgressIndicator(),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+      ); /* Image.network(
         value.toString(),
         fit: BoxFit.scaleDown,
-      );
+      ); */
     });
     return image!;
   }
