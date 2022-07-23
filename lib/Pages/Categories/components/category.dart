@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/src/models/category.dart';
-import 'package:truthsoko/src/themes/theme.dart';
 import 'product_icon.dart';
 
 class Categories extends StatelessWidget {
@@ -14,7 +14,7 @@ class Categories extends StatelessWidget {
           builder: (context, SelectedCategory _selected, child) {
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
-          width: AppTheme.fullWidth(context),
+          width: Global.fullWidth(context),
           height: 80,
           child: ListView(
             scrollDirection: Axis.horizontal,
@@ -23,9 +23,9 @@ class Categories extends StatelessWidget {
                   (category) => ProductIcon(
                     model: category,
                     onSelected: (category) {
-                      _selected.itemSelected(category);
+                      _selected.itemSelected(category, category.tab);
                       print(category.name);
-                      print(_selected.selected);
+                      print(category.tab);
                     },
                   ),
                 )

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:truthsoko/src/themes/light_color.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TitleText extends StatelessWidget {
@@ -11,7 +10,7 @@ class TitleText extends StatelessWidget {
       {Key? key,
       required this.text,
       this.fontSize = 18,
-      this.color = LightColor.titleTextColor,
+      this.color = Colors.black,
       this.fontWeight = FontWeight.w800})
       : super(key: key);
   @override

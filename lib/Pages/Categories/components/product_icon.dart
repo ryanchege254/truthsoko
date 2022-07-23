@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/src/models/category.dart';
 import 'package:truthsoko/src/Widget/constants.dart';
-import 'package:truthsoko/src/themes/theme.dart';
-import 'package:truthsoko/src/themes/light_color.dart';
+
 import 'package:truthsoko/src/Widget/extentions.dart';
 import 'package:truthsoko/src/Widget/title_text.dart';
 
@@ -27,13 +26,12 @@ class ProductIcon extends StatelessWidget {
             child: Consumer<SelectedCategory>(
               builder: (context, selected, child) {
                 return Container(
-                  padding: AppTheme.hPadding,
+                  padding: Global.hPadding,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    color: model.isSelected!
-                        ? LightColor.background
-                        : Colors.transparent,
+                    color:
+                        model.isSelected! ? Global.white : Colors.transparent,
                     border: Border.all(
                       color: model.isSelected!
                           ? Global.orange
@@ -80,5 +78,3 @@ class ProductIcon extends StatelessWidget {
           );
   }
 }
-
-

@@ -17,4 +17,10 @@ class Global {
   static const cartBarHeight = 100.0;
   static const headerHeight = 85.0;
   static const categoryHeight = 60.0;
+  static EdgeInsets hPadding = const EdgeInsets.symmetric(
+    horizontal: 10,
+  );
+  static double fullWidth(BuildContext context) {
+    return MediaQuery.of(context).size.width;
+  }
 }

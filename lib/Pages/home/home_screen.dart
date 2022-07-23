@@ -329,8 +329,6 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
-
     // ignore: todo
     // TODO: implement build
     return ChangeNotifierProvider.value(

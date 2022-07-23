@@ -56,20 +56,21 @@ class Category {
 }
 
 class SelectedCategory extends ChangeNotifier {
-  String tab = "Vegetable";
-  String get selected => tab;
+  CategoryTab tab = CategoryTab.Vegetables;
+  CategoryTab get selected => tab;
 
   onSelected(ValueChanged<Category> onSelected, Category model) {
     onSelected(model);
     notifyListeners();
   }
 
-  itemSelected(Category model) {
+  itemSelected(Category model, CategoryTab?  selected) {
     for (var item in Category.categoryList) {
       item.isSelected = false;
     }
     model.isSelected = true;
-    tab = selected;
+    //model.name = selected;
+   tab = selected!;
     notifyListeners();
   }
 }

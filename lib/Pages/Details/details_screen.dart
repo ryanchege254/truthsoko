@@ -63,19 +63,32 @@ class _DetailsScreenState extends State<DetailsScreen> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: Global.defaultPadding),
-            child: Row(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
-                  child: Text(
-                    widget.product.title!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline6!
-                        .copyWith(fontWeight: FontWeight.bold),
-                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.product.title!,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline6!
+                            .copyWith(fontWeight: FontWeight.w100),
+                      ),
+                    ),
+                    Price(
+                      amount: widget.product.price.toString(),
+                    ),
+                  ],
                 ),
-                Price(
-                  amount: widget.product.price.toString(),
+                Text(
+                  widget.product.location!,
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineSmall!
+                      .copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -111,8 +124,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 children: [
                   Expanded(
                     child: StreamBuilder(
-                        stream: ProductHandler()
-                            .fetchRelatedProducts("${widget.product.category}"),
+                        stream: FirebaseFirestore.instance
+                            .collection("Products")
+                            .where("category",
+                                isEqualTo: widget.product.category)
+                            .where("location",
+                                isEqualTo: widget.product.location)
+                            .snapshots(),
                         builder:
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           final data = snapshot.data;
@@ -183,39 +201,67 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                                           blurRadius: 12,
                                                           color: Global.white)
                                                     ]),
-                                                child:
-                                                    ClipRRect(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                    .horizontal(
-                                                                left: Radius
-                                                                    .circular(
-                                                                        16),
-                                                                right: Radius
-                                                                    .circular(
-                                                                        16)),
-                                                        child: Image.asset(
-                                                            product.image!)),
+                                                child: ClipRRect(
+                                                  borderRadius: const BorderRadius
+                                                          .horizontal(
+                                                      left: Radius.circular(16),
+                                                      right:
+                                                          Radius.circular(16)),
+                                                  child: FutureBuilder(
+                                                      future: ProductModel()
+                                                          .getImage(context,
+                                                              product.image!),
+                                                      builder: ((context,
+                                                          AsyncSnapshot<Widget>
+                                                              snapshot) {
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .done) {
+                                                          return Container(
+                                                            child:
+                                                                snapshot.data,
+                                                          );
+                                                        }
+                                                        if (snapshot
+                                                                .connectionState ==
+                                                            ConnectionState
+                                                                .done) {
+                                                          return const LoadingIndicator(
+                                                            indicatorType: Indicator
+                                                                .circleStrokeSpin,
+                                                          );
+                                                        }
+                                                        return Container();
+                                                      })),
+                                                ),
                                               ),
                                             ),
-                                            const SizedBox(height: 5),
+                                            const SizedBox(height: 3),
                                             Expanded(
                                               child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
-                                                        .spaceBetween,
+                                                        .spaceEvenly,
                                                 children: [
                                                   Text(
-                                                    product.location!,
+                                                    product.title!,
                                                     style: GoogleFonts.acme(
                                                         fontSize: 15,
                                                         fontWeight:
                                                             FontWeight.w300),
                                                   ),
+                                                  Text(
+                                                    product.location!,
+                                                    style: GoogleFonts.acme(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w300),
+                                                  ),
                                                   const SizedBox(width: 5),
-                                                  const Price(amount: "20.00")
+                                                  Price(amount: product.price!)
                                                 ],
                                               ),
                                             ),
@@ -245,9 +291,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
       backgroundColor: Global.green,
       elevation: 0,
       centerTitle: true,
-      title: const Text(
-        "Fruits",
-        style: TextStyle(color: Colors.black),
+      title: Text(
+        widget.product.category!,
+        style: const TextStyle(color: Colors.black),
       ),
       actions: [
         FavBtn(

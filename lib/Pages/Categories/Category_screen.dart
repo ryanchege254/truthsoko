@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/Categories/components/category.dart';
@@ -8,15 +9,33 @@ import 'package:truthsoko/Pages/home/components/Search_text_field.dart';
 import 'package:truthsoko/Utils/Database/productHandler.dart';
 import 'package:truthsoko/src/Widget/title_text.dart';
 import '../../src/Widget/constants.dart';
+import '../../src/Widget/header.dart';
 import '../../src/models/Product.dart';
 import '../../src/models/category.dart';
 import '../Details/details_screen.dart';
 import '../home/components/product_card.dart';
-import 'components/header.dart';
 
 class CategoryScreen extends StatelessWidget {
   final User user;
   const CategoryScreen({Key? key, required this.user}) : super(key: key);
+  String selectedCategory(CategoryTab tab) {
+    if (tab == CategoryTab.Vegetables) {
+      return "Vegetable";
+    }
+    if (tab == CategoryTab.Cereals) {
+      return "Cereals";
+    }
+    if (tab == CategoryTab.Fruits) {
+      return "Fruits";
+    }
+    if (tab == CategoryTab.Herbs) {
+      return "Herbs";
+    }
+    if (tab == CategoryTab.Legumes) {
+      return "Legumes";
+    }
+    return "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +70,12 @@ class CategoryScreen extends StatelessWidget {
                   child: Consumer<SelectedCategory>(
                     builder: ((context, SelectedCategory selected, child) {
                       return StreamBuilder(
-                          stream: ProductHandler()
-                              .fetchRelatedProducts(selected.selected),
+                          stream: FirebaseFirestore.instance
+                              .collection("Products")
+                              .where("category",
+                                  isEqualTo:
+                                      selectedCategory(selected.selected))
+                              .snapshots(),
                           builder:
                               (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                             final data = snapshot.data;
@@ -97,29 +120,31 @@ class CategoryScreen extends StatelessWidget {
                                   );
                                 }
                                 return ProductCard(
-                                    //index: index,
-                                    product: product,
-                                    percentageComplete: 1,
-                                    press: () {
-                                      Navigator.push(
-                                        context,
-                                        PageRouteBuilder(
-                                          transitionDuration:
-                                              const Duration(milliseconds: 700),
-                                          reverseTransitionDuration:
-                                              const Duration(milliseconds: 700),
-                                          pageBuilder: (context, animation,
-                                                  secondaryAnimation) =>
-                                              FadeTransition(
-                                            opacity: animation,
-                                            child: DetailsScreen(
-                                              product: product,
-                                              user: user,
-                                            ),
+                                  //index: index,
+                                  product: product,
+                                  percentageComplete: 1,
+                                  press: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            const Duration(milliseconds: 700),
+                                        reverseTransitionDuration:
+                                            const Duration(milliseconds: 700),
+                                        pageBuilder: (context, animation,
+                                                secondaryAnimation) =>
+                                            FadeTransition(
+                                          opacity: animation,
+                                          child: DetailsScreen(
+                                            product: product,
+                                            user: user,
                                           ),
                                         ),
-                                      );
-                                    }, user: user,);
+                                      ),
+                                    );
+                                  },
+                                  user: user,
+                                );
                               },
                             );
                           });
