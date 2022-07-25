@@ -59,6 +59,12 @@ class ProductCard extends StatelessWidget {
                 .subtitle1!
                 .copyWith(fontWeight: FontWeight.w600),
           ),
+          Expanded(
+            child: Text(
+              product.location ?? "",
+              style: Theme.of(context).textTheme.subtitle2,
+            ),
+          ),
           Text(
             product.category ?? "",
             style: Theme.of(context).textTheme.caption,
