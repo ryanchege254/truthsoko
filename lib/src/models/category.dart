@@ -64,13 +64,12 @@ class SelectedCategory extends ChangeNotifier {
     notifyListeners();
   }
 
-  itemSelected(Category model, CategoryTab?  selected) {
+  itemSelected(Category model) {
     for (var item in Category.categoryList) {
       item.isSelected = false;
     }
     model.isSelected = true;
-    //model.name = selected;
-   tab = selected!;
+    tab = model.tab!;
     notifyListeners();
   }
 }

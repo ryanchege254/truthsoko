@@ -341,12 +341,14 @@ class Home extends StatelessWidget {
                   Expanded(
                     child: GestureDetector(
                         onTap: () => _HomeScreen().toggle(),
-                        child: const HomeHeader()),
+                        child: HomeHeader(
+                          user: user,
+                        )),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
-                  const Expanded(child: SearchWidget(searchController: null)),
+                  //const Expanded(child: SearchWidget(searchController: null)),
                   const SizedBox(height: 8),
                   Tabs(
                     controller: controller,

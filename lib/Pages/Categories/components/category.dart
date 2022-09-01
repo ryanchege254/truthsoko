@@ -23,7 +23,7 @@ class Categories extends StatelessWidget {
                   (category) => ProductIcon(
                     model: category,
                     onSelected: (category) {
-                      _selected.itemSelected(category, category.tab);
+                      _selected.itemSelected(category);
                       print(category.name);
                       print(category.tab);
                     },

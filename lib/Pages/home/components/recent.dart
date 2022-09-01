@@ -166,6 +166,12 @@ class RecentCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
+                      product.location ?? "",
+                      style: Theme.of(context).textTheme.subtitle2,
+                    ),
+                  ),
+                  Expanded(
+                    child: Text(
                       product.category ?? "",
                       style: Theme.of(context).textTheme.caption,
                     ),

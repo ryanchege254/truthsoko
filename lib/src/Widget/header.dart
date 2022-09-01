@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:truthsoko/Pages/home/home_screen.dart';
@@ -5,9 +6,12 @@ import 'package:truthsoko/Utils/Auth/Auth.dart';
 
 import 'package:truthsoko/src/Widget/constants.dart';
 
+import '../../Pages/home/components/Search_text_field.dart';
+
 class HomeHeader extends StatelessWidget {
+  final User user;
   const HomeHeader({
-    Key? key,
+    Key? key, required this.user,
     /*required this.toggle*/
   }) : super(key: key);
   //final Function toggle;
@@ -61,14 +65,25 @@ class HomeHeader extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              _title()
+              _title(),
+              SizedBox(
+                  width: 1,
+                  height: 1,
+                  child: Image.asset("assets/icons/search_2.gif")),
             ],
           ),
-          Provider.of<UserRepository>(context, listen: false).getProfileImage()
-          /*const CircleAvatar(
-            backgroundColor: Colors.transparent,
-            backgroundImage: //AssetImage("assets/images/QuestionMark.jpg"),
-          )*/
+          SizedBox(
+            child: Row(children: [
+              IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: () {
+                  showSearch(context: context, delegate: MySearchDelegate(user));
+                },
+              ),
+              Provider.of<UserRepository>(context, listen: false)
+                  .getProfileImage() //profile image
+            ]),
+          ),
         ],
       ),
     );

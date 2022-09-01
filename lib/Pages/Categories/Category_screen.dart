@@ -48,8 +48,13 @@ class CategoryScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const HomeHeader(),
-              SearchWidget(searchController: searchController),
+              HomeHeader(
+                user: user,
+              ),
+              SearchWidget(
+                searchController: searchController,
+                user: user,
+              ),
               const SizedBox(
                 height: 8,
               ),
