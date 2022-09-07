@@ -10,11 +10,18 @@ class ProductHandler extends ChangeNotifier {
   var firestoreInstance = FirebaseFirestore.instance;
 
   Future saveProduct(String firebaseUser, ProductModel productModel) async {
-    await firestoreInstance
+      final savedProduct = firestoreInstance
         .collection("Users")
         .doc(firebaseUser)
         .collection("SavedItems")
-        .add(productModel.toJson());
+        .doc(productModel.documentId).snapshots();
+        await savedProduct.isEmpty.then((value) => value?firestoreInstance
+        .collection("Users")
+        .doc(firebaseUser)
+        .collection("SavedItems")
+        .add(productModel.toJson()) : (){}) ;
+        
+   
     notifyListeners();
   }
 
@@ -25,6 +32,7 @@ class ProductHandler extends ChangeNotifier {
         .collection("SavedItems")
         .doc()
         .id;
+
     await firestoreInstance
         .collection("Users")
         .doc(firebaseUser.toString())

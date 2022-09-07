@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:truthsoko/Pages/Profile/components/Widget/productList.dart';
+import 'package:truthsoko/src/Widget/productList.dart';
 import 'package:truthsoko/Utils/Database/productHandler.dart';
 import 'package:truthsoko/src/models/Product.dart';
 

@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:truthsoko/src/Widget/streamBuilder.dart';
-
+import '../../../src/Widget/Warning_text.dart';
 import '../../../src/Widget/constants.dart';
 import '../../../src/models/Product.dart';
 import '../../Details/details_screen.dart';
@@ -66,7 +65,7 @@ class SearchWidget extends StatelessWidget {
                 _search
                     ? Container()
                     : Expanded(
-                        child: Container(
+                        child: SizedBox(
                             height: 100,
                             child: StreamBuilder(
                                 stream: FirebaseFirestore.instance
@@ -133,12 +132,13 @@ class MySearchDelegate extends SearchDelegate {
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           final results = query.isEmpty
               ? snapshot.data?.docs
-              : snapshot.data?.docs
-                  .where((a) => a['title'].contains(query));
+              : snapshot.data?.docs.where((a) => a['title'].contains(query));
 
           if (snapshot.hasError) {
-            print("Error.............${snapshot.error}");
-            return Text("Something went wrong ... .. ${snapshot.error}");
+            if (kDebugMode) {
+              print("Error.............${snapshot.error}");
+            }
+            return WarningText(text: "Something went wrong: ${snapshot.error}");
           }
           return ListView.builder(
             itemCount: results?.length,

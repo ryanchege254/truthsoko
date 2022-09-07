@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:truthsoko/Pages/Profile/components/Widget/productList.dart';
+import 'package:truthsoko/src/Widget/productList.dart';
 import 'package:truthsoko/Utils/Auth/Auth.dart';
 import 'package:truthsoko/Utils/Database/productHandler.dart';
 import '../../../src/Widget/constants.dart';
@@ -18,7 +18,6 @@ class Saved extends StatefulWidget {
 class _Saved extends State<Saved> {
   @override
   Widget build(BuildContext context) {
-    final productHandler = ProductHandler();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Saved"),

@@ -12,7 +12,7 @@ class Price extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text.rich(
       TextSpan(
-        text: "\KES ",
+        text: "KES ",
         style: Theme.of(context)
             .textTheme
             .subtitle1!

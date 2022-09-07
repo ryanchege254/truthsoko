@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../../../../src/Widget/constants.dart';
-import '../../../../src/models/Product.dart';
-import '../../../Details/details_screen.dart';
-import '../../../home/components/product_card.dart';
+import 'package:truthsoko/src/Widget/Warning_text.dart';
+import 'constants.dart';
+import '../models/Product.dart';
+import '../../Pages/Details/details_screen.dart';
+import '../../Pages/home/components/product_card.dart';
 
 Widget productlist(final user, AsyncSnapshot<QuerySnapshot> snapshot) {
   return GridView.builder(
@@ -18,15 +20,12 @@ Widget productlist(final user, AsyncSnapshot<QuerySnapshot> snapshot) {
     itemCount: snapshot.data!.docs.length,
     itemBuilder: (context, index) {
       if (snapshot.data!.docs.isEmpty) {
-        print("......................................No data");
         return const Center(
-          child: Text(
-            "No Items have been saved yet",
-            style: TextStyle( color: Colors.black),
-          ),
-        );
+            child: WarningText(text: "No Product has been Added yet"));
       } else if (snapshot.data != null) {
-        print("........................................not null");
+        if (kDebugMode) {
+          print("........................................not null");
+        }
       }
       final ProductModel product =
           ProductModel.fromSnapshot(snapshot.data!.docs[index]);

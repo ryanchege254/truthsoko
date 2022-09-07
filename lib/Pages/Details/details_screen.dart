@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:truthsoko/Utils/Database/productHandler.dart';
 import 'package:truthsoko/src/Widget/constants.dart';
 import 'package:truthsoko/src/Widget/fav_btn.dart';
 import 'package:truthsoko/Pages/Details/components/price.dart';
@@ -135,8 +134,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                             (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                           final data = snapshot.data;
                           if (snapshot.hasError) {
-                            print(
-                                ".................snapshot error: ${snapshot.error}");
+                            
                             return const Center(
                               child: Text("Something went wrong"),
                             );

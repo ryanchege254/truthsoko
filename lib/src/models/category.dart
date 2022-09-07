@@ -56,7 +56,7 @@ class Category {
 }
 
 class SelectedCategory extends ChangeNotifier {
-  CategoryTab tab = CategoryTab.Vegetables;
+  CategoryTab tab = CategoryTab.Fruits;
   CategoryTab get selected => tab;
 
   onSelected(ValueChanged<Category> onSelected, Category model) {
@@ -69,7 +69,7 @@ class SelectedCategory extends ChangeNotifier {
       item.isSelected = false;
     }
     model.isSelected = true;
-    tab = model.tab!;
+    tab = selected;
     notifyListeners();
   }
 }

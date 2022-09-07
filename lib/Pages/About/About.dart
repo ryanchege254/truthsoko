@@ -8,8 +8,7 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String about =
-        "sdfghjfcxghcvjbklgfcvgbn"
+    String about = "sdfghjfcxghcvjbklgfcvgbn"
         " kkojjhjnono iunoioinoin ibnoinboino ijjbniojbioj ijjboijubi jnboojjbo nojjbnolgfghhjkghvlodjkncojncoksjn vnosj vvksj vccisjc visdj vckisj v ikjs vccvkiskdjd viisjn vvoisijncosjncowjcnosdjjncosjdjncoioweujnbcviojufnvs enfcocnsocnwsbncosjddnbviosbnvosjnvoisnboisjfdncvoi";
     return SafeArea(
       child: Scaffold(

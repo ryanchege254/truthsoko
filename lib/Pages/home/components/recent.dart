@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:truthsoko/Utils/Database/productHandler.dart';
+import 'package:truthsoko/src/Widget/Warning_text.dart';
 
 import '../../../src/Widget/constants.dart';
 import '../../../src/Widget/fav_btn.dart';
@@ -25,8 +27,11 @@ class Recent extends StatelessWidget {
           /* productHandler.fetchSavedItems(user.uid), */
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (snapshot.hasError) {
-              print("Error.............${snapshot.error}");
-              return Text("Something went wrong ... .. ${snapshot.error}");
+              if (kDebugMode) {
+                print("Error.............${snapshot.error}");
+              }
+              return WarningText(
+                  text: "Something went wrong: ${snapshot.error}");
             }
             return Container(
                 padding: const EdgeInsets.all(Global.defaultPadding),
@@ -39,9 +44,12 @@ class Recent extends StatelessWidget {
                     ProductModel product =
                         ProductModel.fromSnapshot(snapshot.data!.docs[index]);
                     if (snapshot.data!.docs.isEmpty) {
-                      print("Error..............${snapshot.error}");
+                      if (kDebugMode) {
+                        print("Error.............${snapshot.error}");
+                      }
                       return Center(
-                        child: Text("Error...............${snapshot.error}"),
+                        child: WarningText(
+                            text: "Something went wrong: ${snapshot.error}"),
                       );
                     }
                     return RecentCard(
