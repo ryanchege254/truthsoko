@@ -15,7 +15,7 @@ class Categories extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 10),
           width: Global.fullWidth(context),
-          height: 80,
+          height: 60,
           child: ListView(
             scrollDirection: Axis.horizontal,
             children: Category.categoryList

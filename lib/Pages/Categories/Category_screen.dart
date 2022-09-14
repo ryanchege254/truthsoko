@@ -11,7 +11,6 @@ import '../../src/Widget/constants.dart';
 import '../../src/Widget/header.dart';
 import '../../src/models/category.dart';
 
-
 class CategoryScreen extends StatelessWidget {
   final User user;
   const CategoryScreen({Key? key, required this.user}) : super(key: key);
@@ -63,28 +62,35 @@ class CategoryScreen extends StatelessWidget {
               Expanded(
                 child: Container(
                   decoration: const BoxDecoration(
-                    color: Global.grey,
+                    color: Global.white,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  padding: const EdgeInsets.all(Global.defaultPadding),
+                  padding: const EdgeInsets.only(
+                      left: Global.defaultPadding,
+                      right: Global.defaultPadding),
                   child: Consumer<SelectedCategory>(
                     builder: ((context, SelectedCategory selected, child) {
                       switch (selected.selected) {
                         case CategoryTab.Vegetables:
                           return ProductList(
-                              user: user, category: selectedCategory(selected));
+                              user: user,
+                              category: selected.selectedCategory(selected));
                         case CategoryTab.Fruits:
                           return ProductList(
-                              user: user, category: selectedCategory(selected));
+                              user: user,
+                              category: selected.selectedCategory(selected));
                         case CategoryTab.Legumes:
                           return ProductList(
-                              user: user, category: selectedCategory(selected));
+                              user: user,
+                              category: selected.selectedCategory(selected));
                         case CategoryTab.Herbs:
                           return ProductList(
-                              user: user, category: selectedCategory(selected));
+                              user: user,
+                              category: selected.selectedCategory(selected));
                         case CategoryTab.Cereals:
                           return ProductList(
-                              user: user, category: selectedCategory(selected));
+                              user: user,
+                              category: selected.selectedCategory(selected));
 
                         default:
                       }

@@ -72,4 +72,24 @@ class SelectedCategory extends ChangeNotifier {
     tab = selected;
     notifyListeners();
   }
+
+  String selectedCategory(SelectedCategory selected) {
+    if (selected.selected == CategoryTab.Vegetables) {
+      return "Vegetable";
+    }
+    if (selected.selected == CategoryTab.Cereals) {
+      return "Cereals";
+    }
+    if (selected.selected == CategoryTab.Fruits) {
+      return "Fruits";
+    }
+    if (selected.selected == CategoryTab.Herbs) {
+      return "Herbs";
+    }
+    if (selected.selected == CategoryTab.Legumes) {
+      return "Legumes";
+    }
+    notifyListeners();
+    return "Fruits";
+  }
 }
